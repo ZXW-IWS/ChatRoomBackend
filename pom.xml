@@ -33,6 +33,8 @@
         <swagger-models.version>1.6.0</swagger-models.version>
         <mybatis-plus-generator.version>3.4.1</mybatis-plus-generator.version>
         <mybatis.version>3.5.10</mybatis.version>
+        <redis.version>3.3.0</redis.version>
+        <redisson.version>3.27.2</redisson.version>
         <mysql-connector.version>8.0.29</mysql-connector.version>
         <spring-data-commons.version>2.7.5</spring-data-commons.version>
         <jjwt.version>0.9.1</jjwt.version>
@@ -42,7 +44,7 @@
         <lombok.version>1.18.10</lombok.version>
         <netty-all.version>4.1.76.Final</netty-all.version>
         <weixin-java-mp.version>4.4.0</weixin-java-mp.version>
-        <mybatis-plus-boot-starter.version>3.4.0</mybatis-plus-boot-starter.version>
+        <mybatis-plus-boot-starter3.version>3.5.5</mybatis-plus-boot-starter3.version>
         <jsoup.version>1.15.3</jsoup.version>
         <okhttp.version>4.8.1</okhttp.version>
         <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
@@ -56,6 +58,16 @@
                 <version>${version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
@@ -67,9 +79,10 @@
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus-boot-starter3.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>

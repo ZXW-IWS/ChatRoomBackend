@@ -1,3 +1,5 @@
+server:
+  port: 8080
 spring:
   profiles:
     #运行的环境
@@ -24,3 +26,17 @@ spring:
       timeout: 1800000
       # 设置密码
       password: ${chat-room.redis.password}
+logging:
+  level:
+    com.zuu:
+      debug
+
+wx:
+  mp:
+    #    callback: http://f4cd-113-92-129-127.ngrok.io
+    callback: ${chat-room.wx.callback}
+    configs:
+      - appId: ${chat-room.wx.appId} # 第一个公众号的appid
+        secret: ${chat-room.wx.secret} # 公众号的appsecret
+        token: ${chat-room.wx.token} # 接口配置里的Token值
+        aesKey: ${chat-room.wx.aesKey} # 接口配置里的EncodingAESKey值
