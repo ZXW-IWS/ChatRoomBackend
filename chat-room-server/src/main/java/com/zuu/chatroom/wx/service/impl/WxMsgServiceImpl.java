@@ -3,14 +3,14 @@ package com.zuu.chatroom.wx.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zuu.chatroom.common.utils.RedisUtils;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.service.UserService;
 import com.zuu.chatroom.websocket.service.WebSocketService;
 import com.zuu.chatroom.wx.builder.TextBuilder;
-import com.zuu.chatroom.wx.domain.constant.WxConstant;
+import com.zuu.chatroom.common.constant.WxConstant;
 import com.zuu.chatroom.wx.service.WxMsgService;
 import jakarta.annotation.Resource;
-import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -20,6 +20,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+
+import static com.zuu.chatroom.common.constant.RedisConstant.USER_QR_CODE_KEY;
+import static com.zuu.chatroom.common.constant.RedisConstant.USER_QR_CODE_TTL;
 
 /**
  * @Author zuu
@@ -51,7 +55,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         webSocketService.scanSuccess(loginCode);
         //2. 若用户已经注册过，那么就执行用户的登录环节并返回
         User user = userService.getOne(new QueryWrapper<User>().eq("openid", openid));
-        //2.1 判断用户是否注册过，只需要user不为空且头像或昵称有空值就可以
+        //2.1 判断用户是否注册过，只需要user不为空且头像或昵称有空值就说明未注册
         if(ObjectUtil.isNotNull(user) && StrUtil.isAllNotBlank(user.getAvatar(),user.getNickname())){
             webSocketService.scanLoginSuccess(loginCode,user.getId());
             //订阅事件可以直接调用scan，返回null则说明用户之前注册过了
@@ -63,7 +67,8 @@ public class WxMsgServiceImpl implements WxMsgService {
 
         //4. 发送用户授权的消息，再用户授权之后再补全用户信息
         //将openid与code对应信息存到redis中，后续授权后才能获取到code信息，通知前端登录成功
-        stringRedisTemplate.opsForValue().set(openid, String.valueOf(loginCode));
+        String key = USER_QR_CODE_KEY + openid;
+        RedisUtils.set(key,loginCode,USER_QR_CODE_TTL, TimeUnit.MINUTES);
         String authorizationUrl = String.format(WxConstant.AUTH_URL, wxMpService.getWxMpConfigStorage().getAppId(), URLEncoder.encode(redirectUrl));
         WxMpXmlOutMessage.TEXT().build();
         return new TextBuilder().build("请点击链接授权：<a href=\"" + authorizationUrl + "\">登录</a>", wxMpXmlMessage, wxMpService);
@@ -76,7 +81,8 @@ public class WxMsgServiceImpl implements WxMsgService {
     @Override
     public void authorize(WxOAuth2UserInfo userInfo) {
         User user = userService.fillUserInfo(userInfo);
-        Integer code = Integer.parseInt(stringRedisTemplate.opsForValue().get(userInfo.getOpenid()));
+        String key = USER_QR_CODE_KEY + userInfo.getOpenid();
+        Integer code = RedisUtils.get(key,Integer.class);
         webSocketService.scanLoginSuccess(code,user.getId());
     }
 

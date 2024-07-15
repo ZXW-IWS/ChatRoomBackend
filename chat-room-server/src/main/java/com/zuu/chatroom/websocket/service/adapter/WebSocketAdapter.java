@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WebSocketAdapter {
+    public  WsBaseResp buildInvalidTokenResp() {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.INVALIDATE_TOKEN.getType());
+        return wsBaseResp;
+    }
+
     public WsBaseResp buildScanSuccessResp() {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_SCAN_SUCCESS.getType());

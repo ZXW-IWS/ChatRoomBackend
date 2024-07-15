@@ -1,5 +1,6 @@
 package com.zuu.chatroom.websocket;
 
+import com.zuu.chatroom.websocket.service.HttpHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -80,8 +81,8 @@ public class NettyWebSocketServer {
                          *  2. 这就是为什么当浏览器发送大量数据时，就会发出多次 http请求的原因
                          */
                         pipeline.addLast(new HttpObjectAggregator(8192));
-                        //保存用户ip
-                        //pipeline.addLast(new HttpHeadersHandler());
+                        //自定义的处理器，用于在协议升级时从http取出所需的信息
+                        pipeline.addLast(new HttpHandler());
                         /**
                          * 说明：
                          *  1. 对于 WebSocket，它的数据是以帧frame 的形式传递的；

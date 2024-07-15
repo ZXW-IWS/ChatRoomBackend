@@ -15,5 +15,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 public class WsChannelUserDto implements Serializable {
-    private Long uid;
+    private Long id;
 }

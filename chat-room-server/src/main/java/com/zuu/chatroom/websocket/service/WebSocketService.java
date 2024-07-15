@@ -13,11 +13,11 @@ public interface WebSocketService {
 
     void sendQrcodeUrl(Channel channel);
 
-    void loginSuccess(User user);
-
     void connect(Channel channel);
 
     void scanSuccess(Integer loginCode);
 
     void scanLoginSuccess(Integer loginCode, Long id);
+
+    void authorizeByToken(Channel channel, String token);
 }

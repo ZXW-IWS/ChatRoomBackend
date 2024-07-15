@@ -1,15 +1,18 @@
 package com.zuu.chatroom.websocket;
 
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseReqTypeEnum;
 import com.zuu.chatroom.websocket.domain.vo.req.WsBaseReq;
+import com.zuu.chatroom.websocket.service.NettyUtil;
 import com.zuu.chatroom.websocket.service.WebSocketService;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +58,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                 log.debug("发送登录二维码");
                 break;
             case AUTHORIZE:
-                //TODO 验证登录信息
+                webSocketService.authorizeByToken(ctx.channel(),baseReq.getData());
                 break;
             case HEARTBEAT:
                 break;
@@ -91,6 +94,11 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                 // 关闭用户的连接
                 userOffLine(ctx);
             }
+        }else if(evt instanceof WebSocketServerProtocolHandler.HandshakeComplete){
+            //握手请求
+            String token = NettyUtil.get(ctx.channel(), NettyUtil.TOKEN);
+            if(StrUtil.isNotBlank(token))
+                webSocketService.authorizeByToken(ctx.channel(), token);
         }
         super.userEventTriggered(ctx, evt);
     }

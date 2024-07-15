@@ -21,7 +21,7 @@ spring:
       # Redis服务器端口号
       port: ${chat-room.redis.port}
       # 使用的数据库索引，默认是0
-      database: 0
+      database: 2
       # 连接超时时间
       timeout: 1800000
       # 设置密码
@@ -40,3 +40,19 @@ wx:
         secret: ${chat-room.wx.secret} # 公众号的appsecret
         token: ${chat-room.wx.token} # 接口配置里的Token值
         aesKey: ${chat-room.wx.aesKey} # 接口配置里的EncodingAESKey值
+
+#swagger配置信息
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

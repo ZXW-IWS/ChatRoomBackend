@@ -1,4 +1,4 @@
-package com.zuu.chatroom.wx.domain.constant;
+package com.zuu.chatroom.common.constant;
 
 /**
  * @Author zuu

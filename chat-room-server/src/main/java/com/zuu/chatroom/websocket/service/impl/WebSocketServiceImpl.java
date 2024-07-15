@@ -90,9 +90,37 @@ public class WebSocketServiceImpl implements WebSocketService {
         }
         //移除code
         WAIT_LOGIN_MAP.remove(loginCode);
-        //TODO: 完成token的生成逻辑
         String token = userService.login(id);
         User user = userService.getById(id);
+        loginSuccess(channel,user,token);
+    }
+
+    /**
+     * 用户刷新页面时，根据token认证获取用户信息
+     */
+    @Override
+    public void authorizeByToken(Channel channel, String token) {
+       if(userService.verify(token)){
+           //返回用户信息
+           Long id = userService.getIdByToken(token);
+           User user = userService.getById(id);
+           loginSuccess(channel,user,token);
+       }else{
+           //告知前端该token已失效
+           sendMsg(channel,webSocketAdapter.buildInvalidTokenResp());
+       }
+
+    }
+
+    /**
+     * 登录成功后的具体逻辑处理
+     */
+    private void loginSuccess(Channel channel, User user, String token) {
+        //更新用户在线态
+        WsChannelUserDto wsChannelUserDto = ONLINE_WS_MAP.get(channel);
+        wsChannelUserDto.setId(user.getId());
+
+        //发送用户信息
         sendMsg(channel,webSocketAdapter.buildLoginSuccessResp(user,token));
     }
 
@@ -126,11 +154,6 @@ public class WebSocketServiceImpl implements WebSocketService {
 
         WAIT_LOGIN_MAP.put(code,channel);
         return code;
-    }
-
-    @Override
-    public void loginSuccess(User user) {
-
     }
 
 
