@@ -11,12 +11,15 @@ import com.zuu.chatroom.common.exception.BusinessException;
 import com.zuu.chatroom.common.utils.RedisUtils;
 import com.zuu.chatroom.user.domain.enums.ItemEnum;
 import com.zuu.chatroom.user.domain.enums.ItemTypeEnum;
+import com.zuu.chatroom.user.domain.po.Item;
 import com.zuu.chatroom.user.domain.po.ItemPackage;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
+import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import com.zuu.chatroom.user.mapper.UserMapper;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.service.ItemPackageService;
+import com.zuu.chatroom.user.service.ItemService;
 import com.zuu.chatroom.user.service.UserService;
 import com.zuu.chatroom.user.service.adapter.UserAdapter;
 import jakarta.annotation.Resource;
@@ -24,10 +27,12 @@ import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_KEY;
-import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_TTL;
+import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_TTL_HOURS;
 
 /**
 * @author zuu
@@ -40,6 +45,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     private ItemPackageService itemPackageService;
+    @Resource
+    private ItemService itemService;
 
     @Override
     @Transactional
@@ -57,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String token = IdUtil.simpleUUID();
         String key = USER_TOKEN_KEY + token;
         //token保存到redis
-        RedisUtils.set(key,id,USER_TOKEN_TTL, TimeUnit.HOURS);
+        RedisUtils.set(key,id, USER_TOKEN_TTL_HOURS, TimeUnit.HOURS);
 
         return token;
     }
@@ -81,7 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return;
         String key = USER_TOKEN_KEY + token;
         //刷新token有效事件
-        RedisUtils.expire(key,USER_TOKEN_TTL,TimeUnit.HOURS);
+        RedisUtils.expire(key, USER_TOKEN_TTL_HOURS,TimeUnit.HOURS);
     }
 
     @Override
@@ -145,6 +152,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                     .eq("id",id)
                     .set("nickname",modifyNameReq.getNickname()));
         }
+    }
+
+    @Override
+    public List<BadgeResp> getBadgeList(Long uid) {
+        //1.获取徽章列表
+        List<Item> badgeList = itemService.getListByType(ItemTypeEnum.BADGE.getType());
+        //2.获取用户拥有的徽章列表
+        List<Long> badgeIds = badgeList.stream().map(Item::getId).toList();
+        List<ItemPackage> packages = itemPackageService.getByUid(uid,badgeIds);
+        //获取用户佩戴的徽章
+        User user = this.getById(uid);
+        return UserAdapter.buildBadgeListResp(badgeList,packages,user);
+    }
+
+    @Override
+    @Transactional
+    public void wearBadge(Long uid, Long itemId) {
+        //1. 确保该物品是徽章
+        Item item = itemService.getById(itemId);
+        if(Objects.isNull(item) || !ItemTypeEnum.BADGE.getType().equals(item.getType())){
+            throw new BusinessException("物品不存在或物品不是徽章");
+        }
+        //2. 确保用户拥有这个徽章
+        ItemPackage firstItem = itemPackageService.getFirstItem(uid, itemId);
+        if(Objects.isNull(firstItem)){
+            throw new BusinessException("您还没有这个徽章哦");
+        }
+        //3. 若用户当前已佩戴该徽章，就不必再佩戴了
+        User user = this.getById(uid);
+        if(itemId.equals(user.getItemId()))
+            return;
+        //4. 用户佩戴徽章
+        this.update(new UpdateWrapper<User>().eq("id",uid).set("item_id",itemId));
     }
 }
 

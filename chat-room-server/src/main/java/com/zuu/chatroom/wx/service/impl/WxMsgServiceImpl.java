@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_QR_CODE_KEY;
-import static com.zuu.chatroom.common.constant.RedisConstant.USER_QR_CODE_TTL;
+import static com.zuu.chatroom.common.constant.RedisConstant.USER_QR_CODE_TTL_MINUTES;
 
 /**
  * @Author zuu
@@ -68,7 +68,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         //4. 发送用户授权的消息，再用户授权之后再补全用户信息
         //将openid与code对应信息存到redis中，后续授权后才能获取到code信息，通知前端登录成功
         String key = USER_QR_CODE_KEY + openid;
-        RedisUtils.set(key,loginCode,USER_QR_CODE_TTL, TimeUnit.MINUTES);
+        RedisUtils.set(key,loginCode, USER_QR_CODE_TTL_MINUTES, TimeUnit.MINUTES);
         String authorizationUrl = String.format(WxConstant.AUTH_URL, wxMpService.getWxMpConfigStorage().getAppId(), URLEncoder.encode(redirectUrl));
         WxMpXmlOutMessage.TEXT().build();
         return new TextBuilder().build("请点击链接授权：<a href=\"" + authorizationUrl + "\">登录</a>", wxMpXmlMessage, wxMpService);

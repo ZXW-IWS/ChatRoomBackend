@@ -12,6 +12,7 @@
             <result property="openid" column="openid" jdbcType="VARCHAR"/>
             <result property="userType" column="user_type" jdbcType="INTEGER"/>
             <result property="activeStatus" column="active_status" jdbcType="INTEGER"/>
+            <result property="itemId" column="item_id" jdbcType="BIGINT"/>
             <result property="ipInfo" column="ip_info" jdbcType="VARCHAR"/>
             <result property="lastLoginTime" column="last_login_time" jdbcType="TIMESTAMP"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
@@ -23,7 +24,7 @@
     <sql id="Base_Column_List">
         id,uid,nickname,
         avatar,sex,openid,
-        active_status,ip_info,last_login_time,
+        active_status,item_id,ip_info,last_login_time,
         status,create_time,update_time,
         is_delete
     </sql>

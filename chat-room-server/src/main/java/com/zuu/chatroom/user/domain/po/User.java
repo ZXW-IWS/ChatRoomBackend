@@ -50,6 +50,11 @@ public class User implements Serializable {
     private Integer activeStatus;
 
     /**
+     * 用户佩戴的徽章id
+     */
+    private Long itemId;
+
+    /**
      * 用户ip信息
      */
     private String ipInfo;
@@ -77,7 +82,6 @@ public class User implements Serializable {
     /**
      * 逻辑删除 0-正常 1-删除
      */
-    @TableLogic
     private Integer isDelete;
 
     @TableField(exist = false)

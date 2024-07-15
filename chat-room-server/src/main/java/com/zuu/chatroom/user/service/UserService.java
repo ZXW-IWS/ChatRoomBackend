@@ -4,8 +4,11 @@ package com.zuu.chatroom.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
+import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
+
+import java.util.List;
 
 /**
 * @author zuu
@@ -50,7 +53,26 @@ public interface UserService extends IService<User> {
      */
     User fillUserInfo(WxOAuth2UserInfo userInfo);
 
+    /**
+     * 获取用户详细信息
+     * @param id
+     * @return
+     */
     UserInfoResp getUserInfo(Long id);
 
+    /**
+     * 修改用户名
+     * @param id
+     * @param modifyNameReq
+     */
     void updateUserName(Long id, ModifyNameReq modifyNameReq);
+
+    /**
+     * 获取徽章列表
+     * @param uid
+     * @return
+     */
+    List<BadgeResp> getBadgeList(Long uid);
+
+    void wearBadge(Long uid, Long itemId);
 }

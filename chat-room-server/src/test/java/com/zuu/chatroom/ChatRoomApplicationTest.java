@@ -3,7 +3,11 @@ package com.zuu.chatroom;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
+import com.zuu.chatroom.common.domain.enums.IdempotentEnum;
 import com.zuu.chatroom.common.utils.RedisUtils;
+import com.zuu.chatroom.user.domain.enums.ItemEnum;
+import com.zuu.chatroom.user.domain.enums.ItemTypeEnum;
+import com.zuu.chatroom.user.service.ItemPackageService;
 import com.zuu.chatroom.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +31,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Slf4j
 class ChatRoomApplicationTest {
-
     @Resource
     UserService userService;
+    @Resource
+    ItemPackageService itemPackageService;
+    public static final long UID = 1L;
+
     @Test
     public void login(){
         String token = userService.login(1L);
@@ -65,5 +72,10 @@ class ChatRoomApplicationTest {
         for (String s : split) {
             System.out.println( s);
         }
+    }
+
+    @Test
+    public void acquireItemTest(){
+        itemPackageService.acquireItem(UID, ItemEnum.REG_TOP100_BADGE.getId(), IdempotentEnum.UID,UID+"");
     }
 }
