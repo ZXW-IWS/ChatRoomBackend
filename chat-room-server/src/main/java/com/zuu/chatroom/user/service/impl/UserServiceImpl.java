@@ -9,21 +9,25 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zuu.chatroom.common.exception.BusinessException;
 import com.zuu.chatroom.common.utils.RedisUtils;
+import com.zuu.chatroom.user.domain.enums.BlackTypeEnum;
 import com.zuu.chatroom.user.domain.enums.ItemEnum;
 import com.zuu.chatroom.user.domain.enums.ItemTypeEnum;
+import com.zuu.chatroom.user.domain.enums.RoleEnum;
+import com.zuu.chatroom.user.domain.po.Black;
 import com.zuu.chatroom.user.domain.po.Item;
 import com.zuu.chatroom.user.domain.po.ItemPackage;
+import com.zuu.chatroom.user.domain.vo.req.BlackReq;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import com.zuu.chatroom.user.mapper.UserMapper;
 import com.zuu.chatroom.user.domain.po.User;
-import com.zuu.chatroom.user.service.ItemPackageService;
-import com.zuu.chatroom.user.service.ItemService;
-import com.zuu.chatroom.user.service.UserService;
+import com.zuu.chatroom.user.service.*;
 import com.zuu.chatroom.user.service.adapter.UserAdapter;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_EXCHANGE_NAME;
+import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_KEY;
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_KEY;
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_TTL_HOURS;
 
@@ -40,6 +46,7 @@ import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_TTL_HOUR
 * @createDate 2024-07-06 09:57:19
 */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService {
 
@@ -48,14 +55,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private ItemService itemService;
 
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+    @Resource
+    private MqService mqService;
+    @Resource
+    private RoleService roleService;
+    @Resource
+    private BlackService blackService;
+
     @Override
     @Transactional
     public void register(String openid) {
         User user = new User();
         user.setOpenid(openid);
-
-        //TODO: 封装全局异常处理器后处理失败信息
         boolean saved = this.save(user);
+
+        //发送用户成功注册消息
+        mqService.sendUserRegisterMsg(user);
+
     }
 
 
@@ -185,6 +203,55 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return;
         //4. 用户佩戴徽章
         this.update(new UpdateWrapper<User>().eq("id",uid).set("item_id",itemId));
+    }
+
+    /**
+     *
+     * @param uid 发起请求的用户
+     * @param req 目标用户
+     */
+    @Override
+    public void black(Long uid, BlackReq req) {
+        boolean hasPower = roleService.hasPower(uid, RoleEnum.SUPER_ADMIN);
+        if(!hasPower){
+            throw new BusinessException("没有管理员权限");
+        }
+        Long targetUid = req.getUid();
+        //拉黑用户id
+        blackUid(targetUid);
+
+        //拉黑用户ip
+        User targetUser = this.getById(targetUid);
+        String createIp = targetUser.getIpInfo().getCreateIp();
+        String updateIp = targetUser.getIpInfo().getUpdateIp();
+        blackIp(createIp);
+        blackIp(updateIp);
+
+        //发送拉黑事件
+        mqService.sendBlackUserMsg(targetUser);
+    }
+
+    private void blackIp(String ip) {
+        if(StrUtil.isBlank(ip))
+            return;
+        try {
+            Black black = new Black();
+            black.setType(BlackTypeEnum.IP.getType());
+            black.setTarget(ip);
+            blackService.save(black);
+            log.info("black ip success,the ip is:[{}]",ip);
+        }catch (Exception e){
+            log.error("duplicate black ip,the ip is:[{}]",ip);
+        }
+
+    }
+
+    private void blackUid(Long targetUid) {
+        Black black = new Black();
+        black.setType(BlackTypeEnum.UID.getType());
+        black.setTarget(targetUid.toString());
+        blackService.save(black);
+        log.info("black user success,the user's id is:[{}]",targetUid);
     }
 }
 

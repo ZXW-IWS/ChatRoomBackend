@@ -1,5 +1,6 @@
 package com.zuu.chatroom.common.config;
 
+import com.zuu.chatroom.common.interceptor.BlackInterceptor;
 import com.zuu.chatroom.common.interceptor.RequestInfoInterceptor;
 import com.zuu.chatroom.common.interceptor.TokenInterceptor;
 import jakarta.annotation.Resource;
@@ -22,6 +23,8 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
     private TokenInterceptor tokenInterceptor;
     @Resource
     private RequestInfoInterceptor requestInfoInterceptor;
+    @Resource
+    private BlackInterceptor blackInterceptor;
 
     //拦截器不进行拦截的路径
     private final static List<String> ignorePaths = new ArrayList<>();
@@ -47,8 +50,9 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         //先拦截认证，再拦截授权
         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**").excludePathPatterns(ignorePaths);
-
         registry.addInterceptor(requestInfoInterceptor).addPathPatterns("/**").excludePathPatterns(ignorePaths);
+        registry.addInterceptor(blackInterceptor).addPathPatterns("/**").excludePathPatterns(ignorePaths);
+
     }
 
     /*

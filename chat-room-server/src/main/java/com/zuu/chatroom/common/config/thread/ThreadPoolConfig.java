@@ -21,7 +21,7 @@ public class ThreadPoolConfig implements AsyncConfigurer {
     /**
      * 项目共用线程池
      */
-    public static final String CHAT_EXECUTOR = "mallchatExecutor";
+    public static final String CHAT_EXECUTOR = "chatExecutor";
 
     @Override
     public Executor getAsyncExecutor() {

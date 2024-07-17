@@ -2,15 +2,22 @@ package com.zuu.chatroom.user.domain.po;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.zuu.chatroom.user.domain.entity.IpInfo;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * chat-room用户表
  * @TableName user
  */
-@TableName(value ="user")
+@TableName(value ="user",autoResultMap = true)
 @Data
 public class User implements Serializable {
     /**
@@ -57,7 +64,8 @@ public class User implements Serializable {
     /**
      * 用户ip信息
      */
-    private String ipInfo;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private IpInfo ipInfo;
 
     /**
      * 用户上次登录时间
@@ -86,4 +94,10 @@ public class User implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public void refreshIp(String ip) {
+        if(Objects.isNull(ipInfo))
+            ipInfo = new IpInfo();
+        ipInfo.refreshIp(ip);
+    }
 }

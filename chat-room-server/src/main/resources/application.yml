@@ -1,6 +1,12 @@
 server:
   port: 8080
 spring:
+  rabbitmq:
+    host: ${chat-room.mq.host}
+    port: ${chat-room.mq.port} # 端口
+    virtual-host: ${chat-room.mq.virtual-host} # 虚拟主机
+    username: ${chat-room.mq.username} # 用户名
+    password: ${chat-room.mq.password} # 密码
   profiles:
     #运行的环境
     active: dev

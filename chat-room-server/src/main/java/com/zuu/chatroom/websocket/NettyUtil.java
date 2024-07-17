@@ -1,4 +1,4 @@
-package com.zuu.chatroom.websocket.service;
+package com.zuu.chatroom.websocket;
 
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
@@ -11,7 +11,7 @@ import io.netty.util.AttributeKey;
  */
 public class NettyUtil {
     public static final AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
-
+    public static final AttributeKey<String> IP = AttributeKey.valueOf("ip");
     public static <T> void setAttr(Channel channel,AttributeKey<T> key,T value){
         Attribute<T> attr = channel.attr(key);
         attr.set(value);

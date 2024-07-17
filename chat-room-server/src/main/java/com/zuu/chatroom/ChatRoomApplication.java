@@ -12,7 +12,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.zuu.chatroom.**.mapper")
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true)
 public class ChatRoomApplication {
     public static void main(String[] args) {
         SpringApplication.run(ChatRoomApplication.class);

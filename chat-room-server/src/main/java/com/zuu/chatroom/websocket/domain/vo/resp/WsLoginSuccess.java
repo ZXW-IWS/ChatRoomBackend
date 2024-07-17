@@ -1,5 +1,6 @@
 package com.zuu.chatroom.websocket.domain.vo.resp;
 
+import com.zuu.chatroom.common.domain.enums.YesOrNoEnum;
 import com.zuu.chatroom.user.domain.po.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,11 +19,13 @@ public class WsLoginSuccess {
     private String avatar;
     private String token;
     private String name;
-
-    public WsLoginSuccess(User user,String token){
+    //用户权限 0普通用户 1超管
+    private Integer power;
+    public WsLoginSuccess(User user, String token, boolean hasPower){
         this.id = user.getId();
         this.avatar = user.getAvatar();
         this.name = user.getNickname();
         this.token = token;
+        this.power = hasPower ? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus();
     }
 }

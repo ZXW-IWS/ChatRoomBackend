@@ -1,6 +1,5 @@
 package com.zuu.chatroom.websocket;
 
-import com.zuu.chatroom.websocket.service.HttpHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;

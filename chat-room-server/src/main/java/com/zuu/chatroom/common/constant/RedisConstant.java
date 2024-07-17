@@ -28,4 +28,10 @@ public class RedisConstant {
      */
     public static final String BADGE_LIST_KEY = BASE_KEY + "badges";
     public static final int BADGE_LIST_TTL_MINUTES = 30;
+
+    /**
+     * 黑名单列表
+     */
+    public static final String BLACK_LIST_KEY = BASE_KEY + "black";
+    public static final int BLACK_LIST_TTL_MINUTES = 30;
 }

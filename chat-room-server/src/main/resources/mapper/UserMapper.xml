@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zuu.chatroom.user.mapper.UserMapper">
-
     <resultMap id="BaseResultMap" type="com.zuu.chatroom.user.domain.po.User">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
@@ -13,7 +12,7 @@
             <result property="userType" column="user_type" jdbcType="INTEGER"/>
             <result property="activeStatus" column="active_status" jdbcType="INTEGER"/>
             <result property="itemId" column="item_id" jdbcType="BIGINT"/>
-            <result property="ipInfo" column="ip_info" jdbcType="VARCHAR"/>
+            <result property="ipInfo" column="ip_info" jdbcType="VARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="lastLoginTime" column="last_login_time" jdbcType="TIMESTAMP"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

@@ -4,8 +4,12 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.zuu.chatroom.user.domain.dto.WsChannelUserDto;
+import com.zuu.chatroom.user.domain.enums.RoleEnum;
 import com.zuu.chatroom.user.domain.po.User;
+import com.zuu.chatroom.user.service.MqService;
+import com.zuu.chatroom.user.service.RoleService;
 import com.zuu.chatroom.user.service.UserService;
+import com.zuu.chatroom.websocket.NettyUtil;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsBaseResp;
 import com.zuu.chatroom.websocket.service.WebSocketService;
 import com.zuu.chatroom.websocket.service.adapter.WebSocketAdapter;
@@ -17,11 +21,13 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -41,6 +47,12 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Resource
     @Lazy
     private WxMpService wxMpService;
+    @Resource
+    private MqService mqService;
+    @Resource
+    private RoleService roleService;
+    @Resource
+    private ThreadPoolTaskExecutor chatExecutor;
 
     /**
      * 所有请求登录的code与channel关系
@@ -113,6 +125,21 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     /**
+     *
+     * @param wsBaseResp 消息
+     * @param skipUid 需要跳过的人
+     */
+    @Override
+    public void sendToAllOnlineUser(WsBaseResp wsBaseResp, Long skipUid) {
+        ONLINE_WS_MAP.forEach(((channel, wsChannelUserDto) -> {
+            if(Objects.nonNull(skipUid) && skipUid.equals(wsChannelUserDto.getId()))
+                return;
+            //使用线程池发送消息
+            chatExecutor.execute(() -> sendMsg(channel,wsBaseResp));
+        }));
+    }
+
+    /**
      * 登录成功后的具体逻辑处理
      */
     private void loginSuccess(Channel channel, User user, String token) {
@@ -121,7 +148,14 @@ public class WebSocketServiceImpl implements WebSocketService {
         wsChannelUserDto.setId(user.getId());
 
         //发送用户信息
-        sendMsg(channel,webSocketAdapter.buildLoginSuccessResp(user,token));
+        boolean hasPower = roleService.hasPower(user.getId(), RoleEnum.CHAT_MANAGER);
+        sendMsg(channel,webSocketAdapter.buildLoginSuccessResp(user,token,hasPower));
+        //发送用户上线信息
+        String ip = NettyUtil.get(channel, NettyUtil.IP);
+        user.setLastLoginTime(new Date());
+        //先将ip的字符串更新，具体的ip信息留到后续消息处理时异步进行
+        user.refreshIp(ip);
+        mqService.sendUserOnlineMsg(user);
     }
 
     @Override

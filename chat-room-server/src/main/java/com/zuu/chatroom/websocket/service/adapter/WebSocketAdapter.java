@@ -34,10 +34,10 @@ public class WebSocketAdapter {
         return wsBaseResp;
     }
 
-    public WsBaseResp buildLoginSuccessResp(User user, String token) {
+    public WsBaseResp buildLoginSuccessResp(User user, String token, boolean hasPower) {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_SUCCESS.getType());
-        WsLoginSuccess wsLoginSuccess = new WsLoginSuccess(user,token);
+        WsLoginSuccess wsLoginSuccess = new WsLoginSuccess(user,token,hasPower);
         wsBaseResp.setData(wsLoginSuccess);
         return wsBaseResp;
     }

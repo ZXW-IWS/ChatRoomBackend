@@ -4,11 +4,14 @@ import com.zuu.chatroom.common.domain.dto.RequestInfo;
 import com.zuu.chatroom.common.domain.vo.resp.ApiResult;
 import com.zuu.chatroom.common.interceptor.TokenInterceptor;
 import com.zuu.chatroom.common.utils.RequestHolder;
+import com.zuu.chatroom.user.domain.enums.RoleEnum;
 import com.zuu.chatroom.user.domain.po.User;
+import com.zuu.chatroom.user.domain.vo.req.BlackReq;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
 import com.zuu.chatroom.user.domain.vo.req.WearingBadgeReq;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
+import com.zuu.chatroom.user.service.RoleService;
 import com.zuu.chatroom.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,6 +34,8 @@ import java.util.List;
 public class UserController {
     @Resource
     UserService userService;
+    @Resource
+    RoleService roleService;
     @GetMapping("/userInfo")
     @Operation(summary = "获取用户信息")
     public ApiResult<UserInfoResp> getUserInfo(){
@@ -57,7 +62,14 @@ public class UserController {
         userService.wearBadge(RequestHolder.get().getId(),wearingBadgeReq.getId());
         return ApiResult.success();
     }
+    @PutMapping("/black")
+    @Operation(summary = "拉黑用户")
+    public ApiResult<Void> black(@Valid @RequestBody BlackReq req) {
+        Long uid = RequestHolder.get().getId();
 
+        userService.black(uid,req);
+        return ApiResult.success();
+    }
     @GetMapping("/public/test")
     public String test(){
         int a = 1 / 0;

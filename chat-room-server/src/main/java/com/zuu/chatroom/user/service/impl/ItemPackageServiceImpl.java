@@ -16,6 +16,7 @@ import com.zuu.chatroom.user.service.adapter.ItemPackageAdapter;
 import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,18 +77,11 @@ public class ItemPackageServiceImpl extends ServiceImpl<ItemPackageMapper, ItemP
      * @param businessId 上层发送的唯一标识
      */
     @Override
-    @RedissonLock(key = "#uid+'_'+#itemId")
-    @Transactional
     public void acquireItem(Long uid, Long itemId, IdempotentEnum idempotentEnum, String businessId) {
         String idempotent = getIdempotent(itemId,idempotentEnum,businessId);
-        ItemPackage itemPackage = this.getOne(new QueryWrapper<ItemPackage>().eq("idempotent", idempotent));
-        if(Objects.nonNull(itemPackage)){
-            //说明物品已经发放成功了，返回成功信息
-            return;
-        }
-        //发放物品
-        ItemPackage insertItem = ItemPackageAdapter.buildItemPackageInfo(uid,itemId,idempotent);
-        this.save(insertItem);
+        //通过代理类确保aop
+        ItemPackageServiceImpl itemPackageService = (ItemPackageServiceImpl) AopContext.currentProxy();
+        itemPackageService.doAcquire(uid,itemId,idempotent);
 
         //编程式
         /*lockUtil.executeWithLock("acquireItem:" + idempotent,() -> {
@@ -100,6 +94,19 @@ public class ItemPackageServiceImpl extends ServiceImpl<ItemPackageMapper, ItemP
             ItemPackage insertItem = ItemPackageAdapter.buildItemPackageInfo(uid,itemId,idempotent);
             this.save(insertItem);
         });*/
+    }
+
+    @RedissonLock(key = "#idempotent")
+    @Transactional
+    public void doAcquire(Long uid,Long itemId,String idempotent){
+        ItemPackage itemPackage = this.getOne(new QueryWrapper<ItemPackage>().eq("idempotent", idempotent));
+        if(Objects.nonNull(itemPackage)){
+            //说明物品已经发放成功了，返回成功信息
+            return;
+        }
+        //发放物品
+        ItemPackage insertItem = ItemPackageAdapter.buildItemPackageInfo(uid,itemId,idempotent);
+        this.save(insertItem);
     }
 
 

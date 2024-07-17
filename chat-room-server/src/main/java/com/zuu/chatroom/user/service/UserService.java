@@ -3,6 +3,7 @@ package com.zuu.chatroom.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zuu.chatroom.user.domain.po.User;
+import com.zuu.chatroom.user.domain.vo.req.BlackReq;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
@@ -75,4 +76,11 @@ public interface UserService extends IService<User> {
     List<BadgeResp> getBadgeList(Long uid);
 
     void wearBadge(Long uid, Long itemId);
+
+    /**
+     * 拉黑用户
+     * @param uid 发起请求的用户
+     * @param req 目标用户
+     */
+    void black(Long uid, BlackReq req);
 }

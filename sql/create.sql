@@ -12,7 +12,7 @@ create table user
     openid          varchar(255)                        not null comment '平台中的用户标识',
     user_type       int                                 null comment '用户类别 1-微信  2-测试 ...',
     active_status   int       default 2                 null comment '用户在线状态 1-在线 2-离线',
-    ip_info         varchar(255)                        null comment '用户ip信息',
+    ip_info         json                      null comment '用户ip信息',
     item_id bigint DEFAULT NULL COMMENT '佩戴的徽章id',
     last_login_time datetime  default CURRENT_TIMESTAMP not null comment '用户上次登录时间',
     status          tinyint   default 0                 not null comment '账号状态 0-正常 1-异常',
@@ -51,3 +51,42 @@ INSERT INTO `item`(id, type, img, `describe`) VALUES (1, 1, NULL, '用户可以�
 INSERT INTO `item`(id, type, img, `describe`) VALUES (2, 2, 'https://cdn-icons-png.flaticon.com/128/1533/1533913.png', '爆赞徽章，单条消息被点赞超过10次，即可获得');
 INSERT INTO `item`(id, type, img, `describe`) VALUES (3, 2, 'https://cdn-icons-png.flaticon.com/512/6198/6198527.png ', '前10名注册的用户才能获得的专属徽章');
 INSERT INTO `item`(id, type, img, `describe`) VALUES (4, 2, 'https://cdn-icons-png.flaticon.com/512/10232/10232583.png', '前100名注册的用户才能获得的专属徽章');
+
+
+DROP TABLE IF EXISTS `black`;
+CREATE TABLE `black`  (
+                          `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+                          `type` int(11) NOT NULL COMMENT '拉黑目标类型 1.ip 2uid',
+                          `target` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '拉黑目标',
+                          `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+                          `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
+                          PRIMARY KEY (`id`) USING BTREE,
+                          UNIQUE INDEX `idx_type_target`(`type`, `target`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '黑名单' ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+                        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                        `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色名称',
+                        `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+                        `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
+                        PRIMARY KEY (`id`) USING BTREE,
+                        KEY `idx_create_time` (`create_time`) USING BTREE,
+                        KEY `idx_update_time` (`update_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
+insert into role(id,`name`) values(1,'超级管理员');
+insert into role(id,`name`) values(2,'群聊管理员');
+
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
+                             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                             `uid` bigint(20) NOT NULL COMMENT 'uid',
+                             `role_id` bigint(20) NOT NULL COMMENT '角色id',
+                             `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+                             `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
+                             PRIMARY KEY (`id`) USING BTREE,
+                             KEY `idx_uid` (`uid`) USING BTREE,
+                             KEY `idx_role_id` (`role_id`) USING BTREE,
+                             KEY `idx_create_time` (`create_time`) USING BTREE,
+                             KEY `idx_update_time` (`update_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色关系表';

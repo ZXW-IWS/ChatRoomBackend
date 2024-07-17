@@ -6,7 +6,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseReqTypeEnum;
 import com.zuu.chatroom.websocket.domain.vo.req.WsBaseReq;
-import com.zuu.chatroom.websocket.service.NettyUtil;
 import com.zuu.chatroom.websocket.service.WebSocketService;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
