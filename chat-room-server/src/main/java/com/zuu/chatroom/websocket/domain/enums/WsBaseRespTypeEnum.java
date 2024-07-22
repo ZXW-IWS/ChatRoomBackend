@@ -1,5 +1,6 @@
 package com.zuu.chatroom.websocket.domain.enums;
 
+import com.zuu.chatroom.websocket.domain.vo.resp.WsFriendApply;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsBlack;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsLoginSuccess;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public enum WsBaseRespTypeEnum {
     BLACK(7, "拉黑用户", WsBlack.class),
     //MARK(8, "消息标记", WSMsgMark.class),
     //RECALL(9, "消息撤回", WSMsgRecall.class),
-    //APPLY(10, "好友申请", WSFriendApply.class),
+    APPLY(10, "好友申请", WsFriendApply.class),
     //MEMBER_CHANGE(11, "成员变动", WSMemberChange.class),
     ;
 

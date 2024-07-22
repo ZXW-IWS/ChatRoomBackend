@@ -29,7 +29,10 @@ public class LockUtil {
             }
             //执行业务逻辑
             return supplier.get();
-        } catch (Throwable e) {
+        }catch (BusinessException e){
+            throw new BusinessException(e);
+        }
+        catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
             lock.unlock();

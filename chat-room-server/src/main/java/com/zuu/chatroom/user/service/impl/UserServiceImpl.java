@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zuu.chatroom.common.exception.BusinessException;
 import com.zuu.chatroom.common.utils.RedisUtils;
+import com.zuu.chatroom.user.domain.dto.ItemInfoDTO;
+import com.zuu.chatroom.user.domain.dto.SummeryInfoDTO;
 import com.zuu.chatroom.user.domain.enums.BlackTypeEnum;
 import com.zuu.chatroom.user.domain.enums.ItemEnum;
 import com.zuu.chatroom.user.domain.enums.ItemTypeEnum;
@@ -17,7 +19,9 @@ import com.zuu.chatroom.user.domain.po.Black;
 import com.zuu.chatroom.user.domain.po.Item;
 import com.zuu.chatroom.user.domain.po.ItemPackage;
 import com.zuu.chatroom.user.domain.vo.req.BlackReq;
+import com.zuu.chatroom.user.domain.vo.req.ItemInfoReq;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
+import com.zuu.chatroom.user.domain.vo.req.SummeryInfoReq;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import com.zuu.chatroom.user.mapper.UserMapper;
@@ -31,9 +35,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_EXCHANGE_NAME;
 import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_KEY;
@@ -229,6 +233,112 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //发送拉黑事件
         mqService.sendBlackUserMsg(targetUser);
+    }
+
+    /**
+     * 返回好友的在线状态信息
+     * @param friendIds
+     * @return
+     */
+    @Override
+    public Map<Long, Integer> getFriendActiveInfo(List<Long> friendIds) {
+        List<User> friends = this.list(new QueryWrapper<User>().in("id", friendIds));
+        Map<Long,Integer> friendActiveMap = new HashMap<>();
+        friends.forEach(friend -> {
+            friendActiveMap.put(friend.getId(),friend.getActiveStatus());
+        });
+        return friendActiveMap;
+    }
+
+    @Override
+    public List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req) {
+        List<SummeryInfoReq.infoReq> reqList = req.getReqList();
+        //1.获取需要更新用户信息
+        Set<Long> needRefreshIds = getNeedRefreshUsers(req);
+        Map<Long,User> needRefreshUserMap = new HashMap<>();
+        this.listByIds(needRefreshIds).forEach(user -> {
+            needRefreshUserMap.put(user.getId(),user);
+        });
+        //2.判断是否需要更新向用户返回相应的信息
+        List<SummeryInfoDTO> res = new ArrayList<>(reqList.size());
+        List<Long> uidList = reqList.stream().map(SummeryInfoReq.infoReq::getUid).toList();
+        //3.组装返回信息
+        uidList.forEach(uid -> {
+            if(needRefreshIds.contains(uid))
+                res.add(needRefreshDto(needRefreshUserMap.get(uid)));
+            else
+                res.add(noNeedRefreshDto(uid));
+        });
+
+        return res;
+    }
+
+    @Override
+    public List<ItemInfoDTO> getItemInfo(ItemInfoReq req) {
+        return req.getReqList().stream().map(infoReq -> {
+            Item item = itemService.getById(infoReq.getItemId());
+            if (item.getUpdateTime().getTime() > infoReq.getLastModifyTime()) {
+                ItemInfoDTO itemInfoDTO = new ItemInfoDTO();
+                itemInfoDTO.setItemId(item.getId());
+                itemInfoDTO.setNeedRefresh(Boolean.FALSE);
+                return itemInfoDTO;
+            }
+            ItemInfoDTO itemInfoDTO = new ItemInfoDTO();
+            itemInfoDTO.setItemId(item.getId());
+            itemInfoDTO.setNeedRefresh(Boolean.TRUE);
+            itemInfoDTO.setImg(item.getImg());
+            itemInfoDTO.setDescribe(item.getDescribe());
+            return itemInfoDTO;
+        }).toList();
+    }
+
+    private SummeryInfoDTO needRefreshDto(User user) {
+        SummeryInfoDTO summeryInfoDTO = new SummeryInfoDTO();
+        summeryInfoDTO.setUid(user.getId());
+        summeryInfoDTO.setNeedRefresh(Boolean.TRUE);
+        summeryInfoDTO.setName(user.getNickname());
+        summeryInfoDTO.setAvatar(user.getAvatar());
+        summeryInfoDTO.setLocPlace(user.getIpInfo().getUpdateIpDetail().getCity());
+        summeryInfoDTO.setWearingItemId(user.getItemId());
+
+        //获取用户徽章
+        List<Item> badgeList = itemService.getListByType(ItemTypeEnum.BADGE.getType());
+        List<ItemPackage> userPackage =
+                itemPackageService.getByUid(user.getId(), badgeList.stream().map(Item::getId).toList());
+        List<Long> itemIds = userPackage.stream().map(ItemPackage::getItemId).toList();
+        summeryInfoDTO.setItemIds(itemIds);
+
+        return summeryInfoDTO;
+    }
+
+    private SummeryInfoDTO noNeedRefreshDto(Long uid) {
+        SummeryInfoDTO summeryInfoDTO = new SummeryInfoDTO();
+        summeryInfoDTO.setUid(uid);
+        summeryInfoDTO.setNeedRefresh(Boolean.FALSE);
+        return summeryInfoDTO;
+    }
+
+    /**
+     * 获取请求中需要更新的uid的set
+     */
+    private Set<Long> getNeedRefreshUsers(SummeryInfoReq req) {
+        List<Long> uidList = req.getReqList().stream().map(SummeryInfoReq.infoReq::getUid).toList();
+        List<User> userList = this.listByIds(uidList);
+        Map<Long,Long> lastModifyMap = new HashMap<>(req.getReqList().size());
+        req.getReqList().forEach(infoReq -> {
+            lastModifyMap.put(infoReq.getUid(),infoReq.getLastModifyTime());
+        });
+        Set<Long> res = new HashSet<>();
+        userList.forEach(user -> {
+            long lastUpdateTime = user.getUpdateTime().getTime();
+            long lastUpdateTimeFromReq = lastModifyMap.get(user.getId());
+            //判断是否需要更新
+            if(lastUpdateTime <= lastUpdateTimeFromReq){
+                res.add(user.getId());
+            }
+        });
+
+        return res;
     }
 
     private void blackIp(String ip) {

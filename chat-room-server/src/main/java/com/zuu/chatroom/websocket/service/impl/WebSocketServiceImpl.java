@@ -65,7 +65,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     private static final ConcurrentHashMap<Channel, WsChannelUserDto> ONLINE_WS_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 所有在线的用户和对应的socket
+     * 所有在线的用户和对应的channel，CopyOnWriteArrayList是ArrayList的线程安全版本
      */
     private static final ConcurrentHashMap<Long, CopyOnWriteArrayList<Channel>> ONLINE_UID_MAP = new ConcurrentHashMap<>();
 
@@ -139,10 +139,24 @@ public class WebSocketServiceImpl implements WebSocketService {
         }));
     }
 
+    @Override
+    public void sendToUser(Long uid, WsBaseResp wsBaseResp) {
+        CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
+        channels.forEach(channel -> {
+            sendMsg(channel,wsBaseResp);
+        });
+    }
+
     /**
      * 登录成功后的具体逻辑处理
      */
     private void loginSuccess(Channel channel, User user, String token) {
+        //更新用户id与channel对应信息
+        CopyOnWriteArrayList<Channel> userChannelList = ONLINE_UID_MAP
+                .getOrDefault(user.getId(), new CopyOnWriteArrayList<Channel>());
+        userChannelList.add(channel);
+        ONLINE_UID_MAP.put(user.getId(),userChannelList);
+
         //更新用户在线态
         WsChannelUserDto wsChannelUserDto = ONLINE_WS_MAP.get(channel);
         wsChannelUserDto.setId(user.getId());
@@ -160,8 +174,11 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Override
     public void doOffline(Channel channel) {
-        //TODO:用户离线逻辑处理
+        WsChannelUserDto wsChannelUserDto = ONLINE_WS_MAP.get(channel);
+
+        //TODO:用户离线逻辑处理,删除uid与channel对应关系
         ONLINE_WS_MAP.remove(channel);
+
     }
 
     @Override

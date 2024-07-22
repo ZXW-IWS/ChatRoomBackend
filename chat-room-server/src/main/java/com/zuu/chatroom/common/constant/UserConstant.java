@@ -7,4 +7,6 @@ package com.zuu.chatroom.common.constant;
  */
 public class UserConstant {
     public static final int UID_LENGTH = 6;
+
+    public static final int MAX_FRIEND_COUNT = 100;
 }

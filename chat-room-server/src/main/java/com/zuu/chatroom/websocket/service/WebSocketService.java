@@ -28,4 +28,6 @@ public interface WebSocketService {
      * @param skipUid 需要跳过的人
      */
     void sendToAllOnlineUser(WsBaseResp wsBaseResp, Long skipUid);
+
+    void sendToUser(Long uid,WsBaseResp wsBaseResp);
 }

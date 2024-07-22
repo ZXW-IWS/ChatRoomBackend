@@ -4,6 +4,8 @@ import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.service.MqService;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import static com.zuu.chatroom.common.constant.RabbitMqConstant.*;
@@ -17,7 +19,6 @@ import static com.zuu.chatroom.common.constant.RabbitMqConstant.*;
 public class MqServiceImpl implements MqService {
     @Resource
     RabbitTemplate rabbitTemplate;
-
 
     /**
      * @see com.zuu.chatroom.user.listener.OnlineListener
@@ -42,5 +43,13 @@ public class MqServiceImpl implements MqService {
     @Override
     public void sendUserRegisterMsg(User user) {
         rabbitTemplate.convertAndSend(REGISTER_EXCHANGE_NAME,REGISTER_KEY,user);
+    }
+
+    /**
+     * @see com.zuu.chatroom.websocket.listener.ApplyListener
+     */
+    @Override
+    public void sendApplyMsg(Long applyId) {
+        rabbitTemplate.convertAndSend(APPLY_EXCHANGE_NAME,APPLY_KEY,applyId);
     }
 }

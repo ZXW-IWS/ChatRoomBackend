@@ -13,4 +13,6 @@ public interface MqService {
     void sendBlackUserMsg(User blackUser);
 
     void sendUserRegisterMsg(User user);
+
+    void sendApplyMsg(Long applyId);
 }

@@ -4,11 +4,11 @@ import com.zuu.chatroom.common.domain.dto.RequestInfo;
 import com.zuu.chatroom.common.domain.vo.resp.ApiResult;
 import com.zuu.chatroom.common.interceptor.TokenInterceptor;
 import com.zuu.chatroom.common.utils.RequestHolder;
+import com.zuu.chatroom.user.domain.dto.ItemInfoDTO;
+import com.zuu.chatroom.user.domain.dto.SummeryInfoDTO;
 import com.zuu.chatroom.user.domain.enums.RoleEnum;
 import com.zuu.chatroom.user.domain.po.User;
-import com.zuu.chatroom.user.domain.vo.req.BlackReq;
-import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
-import com.zuu.chatroom.user.domain.vo.req.WearingBadgeReq;
+import com.zuu.chatroom.user.domain.vo.req.*;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import com.zuu.chatroom.user.service.RoleService;
@@ -69,6 +69,18 @@ public class UserController {
 
         userService.black(uid,req);
         return ApiResult.success();
+    }
+
+    @PostMapping("/public/summary/userInfo/batch")
+    @Operation(summary = "(懒加载)用户聚合信息-返回的代表需要刷新的")
+    public ApiResult<List<SummeryInfoDTO>> getSummeryUserInfo(@Valid @RequestBody SummeryInfoReq req) {
+        return ApiResult.success(userService.getSummeryUserInfo(req));
+    }
+
+    @PostMapping("/public/badges/batch")
+    @Operation(summary = "(懒加载)徽章聚合信息-返回的代表需要刷新的")
+    public ApiResult<List<ItemInfoDTO>> getItemInfo(@Valid @RequestBody ItemInfoReq req) {
+        return ApiResult.success(userService.getItemInfo(req));
     }
     @GetMapping("/public/test")
     public String test(){

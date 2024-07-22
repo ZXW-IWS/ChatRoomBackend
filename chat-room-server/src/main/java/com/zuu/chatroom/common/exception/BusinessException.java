@@ -15,10 +15,8 @@ public class BusinessException extends RuntimeException{
     private String message;
 
     public BusinessException(){
-        super();
     }
     public BusinessException(String message){
-        super(message);
         this.code = CommonErrorEnum.BUSINESS_EXCEPTION.getErrorCode();
         this.message = message;
     }
@@ -28,5 +26,9 @@ public class BusinessException extends RuntimeException{
     }
     public BusinessException(CommonErrorEnum commonErrorEnum){
         this(commonErrorEnum.getErrorCode(),commonErrorEnum.getErrorMsg());
+    }
+    public BusinessException(BusinessException e){
+        this.code = e.getCode();
+        this.message = e.getMessage();
     }
 }

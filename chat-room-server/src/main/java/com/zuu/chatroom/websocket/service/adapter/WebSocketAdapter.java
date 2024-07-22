@@ -1,8 +1,10 @@
 package com.zuu.chatroom.websocket.service.adapter;
 
 import com.zuu.chatroom.user.domain.po.User;
+import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseRespTypeEnum;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsBaseResp;
+import com.zuu.chatroom.websocket.domain.vo.resp.WsFriendApply;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsLoginSuccess;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsQrcodeResp;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -15,6 +17,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WebSocketAdapter {
+    public static WsBaseResp buildNewApplyMsgResp(Long uid, Long unReadCount) {
+        WsFriendApply wsFriendApply = new WsFriendApply();
+        wsFriendApply.setUid(uid);
+        wsFriendApply.setUnreadCount(unReadCount);
+
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.APPLY.getType());
+        wsBaseResp.setData(wsFriendApply);
+
+        return wsBaseResp;
+    }
+
     public  WsBaseResp buildInvalidTokenResp() {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.INVALIDATE_TOKEN.getType());

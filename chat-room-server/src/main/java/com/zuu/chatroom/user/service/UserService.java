@@ -2,14 +2,19 @@ package com.zuu.chatroom.user.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zuu.chatroom.user.domain.dto.ItemInfoDTO;
+import com.zuu.chatroom.user.domain.dto.SummeryInfoDTO;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.domain.vo.req.BlackReq;
+import com.zuu.chatroom.user.domain.vo.req.ItemInfoReq;
 import com.zuu.chatroom.user.domain.vo.req.ModifyNameReq;
+import com.zuu.chatroom.user.domain.vo.req.SummeryInfoReq;
 import com.zuu.chatroom.user.domain.vo.resp.BadgeResp;
 import com.zuu.chatroom.user.domain.vo.resp.UserInfoResp;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author zuu
@@ -83,4 +88,16 @@ public interface UserService extends IService<User> {
      * @param req 目标用户
      */
     void black(Long uid, BlackReq req);
+
+    Map<Long, Integer> getFriendActiveInfo(List<Long> friendIds);
+
+    /**
+     * 懒加载时前端请求后端用户信息
+     */
+    List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req);
+
+    /**
+     * 懒加载时前端请求徽章信息
+     */
+    List<ItemInfoDTO> getItemInfo(ItemInfoReq req);
 }

@@ -26,4 +26,11 @@ public class RabbitMqConstant {
     public static final String BLACK_EXCHANGE_NAME = "black.direct";
     public static final String BLACK_USER_KEY = "black.user";
     public static final String BLACK_USER_QUEUE_NAME = "black.user.queue";
+
+    /**
+     * 好友申请队列
+     */
+    public static final String APPLY_EXCHANGE_NAME = "apply.direct";
+    public static final String APPLY_KEY = "apply";
+    public static final String APPLY_QUEUE_NAME = "apply.queue";
 }
