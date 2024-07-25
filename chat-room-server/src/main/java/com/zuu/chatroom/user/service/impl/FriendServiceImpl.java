@@ -2,18 +2,16 @@ package com.zuu.chatroom.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zuu.chatroom.common.annotation.RedissonLock;
-import com.zuu.chatroom.common.domain.vo.req.CursorPageBaseReq;
 import com.zuu.chatroom.common.domain.vo.req.PageBaseReq;
 import com.zuu.chatroom.common.domain.vo.resp.PageBaseResp;
 import com.zuu.chatroom.common.exception.BusinessException;
-import com.zuu.chatroom.user.domain.enums.ApplyReadStatusEnum;
+import com.zuu.chatroom.common.service.MqService;
 import com.zuu.chatroom.user.domain.enums.ApplyStatusEnum;
 import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.user.domain.po.UserFriend;
 import com.zuu.chatroom.user.domain.vo.req.FriendApplyReq;
 import com.zuu.chatroom.user.domain.vo.req.FriendApproveReq;
 import com.zuu.chatroom.user.domain.vo.req.FriendCheckReq;
-import com.zuu.chatroom.user.domain.vo.req.FriendListReq;
 import com.zuu.chatroom.user.domain.vo.resp.FriendApplyResp;
 import com.zuu.chatroom.user.domain.vo.resp.FriendCheckResp;
 import com.zuu.chatroom.user.domain.vo.resp.FriendResp;
@@ -26,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.zuu.chatroom.common.constant.RedisConstant.BASE_KEY;
 import static com.zuu.chatroom.common.constant.UserConstant.MAX_FRIEND_COUNT;
 
 /**

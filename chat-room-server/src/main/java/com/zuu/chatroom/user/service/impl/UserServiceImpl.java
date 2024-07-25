@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zuu.chatroom.common.exception.BusinessException;
+import com.zuu.chatroom.common.service.MqService;
 import com.zuu.chatroom.common.utils.RedisUtils;
 import com.zuu.chatroom.user.domain.dto.ItemInfoDTO;
 import com.zuu.chatroom.user.domain.dto.SummeryInfoDTO;
@@ -37,10 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_EXCHANGE_NAME;
-import static com.zuu.chatroom.common.constant.RabbitMqConstant.REGISTER_KEY;
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_KEY;
 import static com.zuu.chatroom.common.constant.RedisConstant.USER_TOKEN_TTL_HOURS;
 

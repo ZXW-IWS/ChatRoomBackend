@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.zuu.chatroom.user.domain.dto.WsChannelUserDto;
 import com.zuu.chatroom.user.domain.enums.RoleEnum;
 import com.zuu.chatroom.user.domain.po.User;
-import com.zuu.chatroom.user.service.MqService;
+import com.zuu.chatroom.common.service.MqService;
 import com.zuu.chatroom.user.service.RoleService;
 import com.zuu.chatroom.user.service.UserService;
 import com.zuu.chatroom.websocket.NettyUtil;
@@ -24,8 +24,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;

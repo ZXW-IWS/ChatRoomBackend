@@ -3,6 +3,8 @@ package com.zuu.chatroom.chat.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zuu.chatroom.chat.domain.po.MessageMark;
 
+import java.util.List;
+
 /**
 * @author zuu
 * @description 针对表【message_mark(消息标记表)】的数据库操作Service
@@ -10,4 +12,5 @@ import com.zuu.chatroom.chat.domain.po.MessageMark;
 */
 public interface MessageMarkService extends IService<MessageMark> {
 
+    List<MessageMark> getMarksByMsgId(Long msgId);
 }

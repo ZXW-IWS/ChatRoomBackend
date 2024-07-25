@@ -1,5 +1,6 @@
 package com.zuu.chatroom.chat.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zuu.chatroom.chat.domain.po.GroupMember;
 import com.zuu.chatroom.chat.mapper.GroupMemberMapper;
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Service;
 public class GroupMemberServiceImpl extends ServiceImpl<GroupMemberMapper, GroupMember>
     implements GroupMemberService {
 
+    @Override
+    public GroupMember getMember(Long uid, Long groupId) {
+        return this.getOne(new QueryWrapper<GroupMember>().eq("group_id", groupId).eq("uid", uid));
+    }
 }
 
 

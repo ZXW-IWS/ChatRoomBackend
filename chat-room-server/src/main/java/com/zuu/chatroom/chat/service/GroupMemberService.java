@@ -10,4 +10,5 @@ import com.zuu.chatroom.chat.domain.po.GroupMember;
 */
 public interface GroupMemberService extends IService<GroupMember> {
 
+    GroupMember getMember(Long uid, Long groupId);
 }

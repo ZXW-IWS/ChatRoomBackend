@@ -52,7 +52,7 @@ class ChatRoomApplicationTest {
 
     @Test
     public void login(){
-        String token = userService.login(3L);
+        String token = userService.login(1L);
         System.out.println("token = " + token);
     }
     
@@ -149,5 +149,10 @@ class ChatRoomApplicationTest {
     public void getNullTest(){
         User user = userService.getById(6L);
         System.out.println(Objects.isNull(user));
+    }
+
+    @Test
+    public void initTest(){
+
     }
 }

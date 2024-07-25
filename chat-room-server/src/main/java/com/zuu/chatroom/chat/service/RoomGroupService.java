@@ -10,4 +10,5 @@ import com.zuu.chatroom.chat.domain.po.RoomGroup;
 */
 public interface RoomGroupService extends IService<RoomGroup> {
 
+    RoomGroup getByRoomId(Long roomId);
 }

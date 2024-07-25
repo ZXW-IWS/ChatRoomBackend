@@ -1,4 +1,4 @@
-package com.zuu.chatroom.user.service;
+package com.zuu.chatroom.common.service;
 
 import com.zuu.chatroom.user.domain.po.User;
 
@@ -15,4 +15,6 @@ public interface MqService {
     void sendUserRegisterMsg(User user);
 
     void sendApplyMsg(Long applyId);
+
+    void sendMsg(Long msgId);
 }

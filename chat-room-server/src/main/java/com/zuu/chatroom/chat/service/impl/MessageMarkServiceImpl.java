@@ -1,10 +1,14 @@
 package com.zuu.chatroom.chat.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zuu.chatroom.chat.domain.enums.MarkedMsgStatusEnum;
 import com.zuu.chatroom.chat.domain.po.MessageMark;
 import com.zuu.chatroom.chat.mapper.MessageMarkMapper;
 import com.zuu.chatroom.chat.service.MessageMarkService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author zuu
@@ -15,6 +19,12 @@ import org.springframework.stereotype.Service;
 public class MessageMarkServiceImpl extends ServiceImpl<MessageMarkMapper, MessageMark>
     implements MessageMarkService {
 
+    @Override
+    public List<MessageMark> getMarksByMsgId(Long msgId) {
+        return this.list(new QueryWrapper<MessageMark>()
+                .eq("msg_id", msgId)
+                .eq("status", MarkedMsgStatusEnum.NORMAL.getStatus()));
+    }
 }
 
 

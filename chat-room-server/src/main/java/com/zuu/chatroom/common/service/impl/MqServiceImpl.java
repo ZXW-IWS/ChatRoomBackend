@@ -1,11 +1,9 @@
-package com.zuu.chatroom.user.service.impl;
+package com.zuu.chatroom.common.service.impl;
 
 import com.zuu.chatroom.user.domain.po.User;
-import com.zuu.chatroom.user.service.MqService;
+import com.zuu.chatroom.common.service.MqService;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import static com.zuu.chatroom.common.constant.RabbitMqConstant.*;
@@ -51,5 +49,10 @@ public class MqServiceImpl implements MqService {
     @Override
     public void sendApplyMsg(Long applyId) {
         rabbitTemplate.convertAndSend(APPLY_EXCHANGE_NAME,APPLY_KEY,applyId);
+    }
+
+    @Override
+    public void sendMsg(Long msgId) {
+
     }
 }
