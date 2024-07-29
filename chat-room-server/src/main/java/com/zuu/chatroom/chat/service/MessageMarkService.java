@@ -1,6 +1,7 @@
 package com.zuu.chatroom.chat.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zuu.chatroom.chat.domain.po.Message;
 import com.zuu.chatroom.chat.domain.po.MessageMark;
 
 import java.util.List;
@@ -13,4 +14,6 @@ import java.util.List;
 public interface MessageMarkService extends IService<MessageMark> {
 
     List<MessageMark> getMarksByMsgId(Long msgId);
+
+    List<MessageMark> getMarksByBatchMsgId(List<Message> messageList);
 }

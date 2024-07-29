@@ -3,6 +3,7 @@ package com.zuu.chatroom.chat.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zuu.chatroom.chat.domain.enums.MarkedMsgStatusEnum;
+import com.zuu.chatroom.chat.domain.po.Message;
 import com.zuu.chatroom.chat.domain.po.MessageMark;
 import com.zuu.chatroom.chat.mapper.MessageMarkMapper;
 import com.zuu.chatroom.chat.service.MessageMarkService;
@@ -24,6 +25,16 @@ public class MessageMarkServiceImpl extends ServiceImpl<MessageMarkMapper, Messa
         return this.list(new QueryWrapper<MessageMark>()
                 .eq("msg_id", msgId)
                 .eq("status", MarkedMsgStatusEnum.NORMAL.getStatus()));
+    }
+
+    @Override
+    public List<MessageMark> getMarksByBatchMsgId(List<Message> messageList) {
+        List<Long> msgIdList = messageList.stream().map(Message::getId).toList();
+
+        return this.list(
+                new QueryWrapper<MessageMark>()
+                        .eq("status", MarkedMsgStatusEnum.NORMAL.getStatus())
+                        .in("msg_id", msgIdList));
     }
 }
 

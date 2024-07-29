@@ -146,13 +146,20 @@ class ChatRoomApplicationTest {
     }
 
     @Test
+    public void saveLongListTest(){
+        List<Long> list = Arrays.asList(1L, 2L);
+        stringRedisTemplate.opsForList().rightPushAll("lTest",list.stream().map(Objects::toString).toList());
+    }
+
+    @Test
     public void getNullTest(){
         User user = userService.getById(6L);
         System.out.println(Objects.isNull(user));
     }
 
     @Test
-    public void initTest(){
-
+    public void setContainsNullTest(){
+        Set<Integer> set = new HashSet<>();
+        System.out.println(set.contains(null));
     }
 }

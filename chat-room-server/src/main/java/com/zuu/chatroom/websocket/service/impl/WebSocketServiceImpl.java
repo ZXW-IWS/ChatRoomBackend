@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -50,7 +51,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Resource
     private RoleService roleService;
     @Resource
-    private ThreadPoolTaskExecutor chatExecutor;
+    private ThreadPoolTaskExecutor websocketExecutor;
 
     /**
      * 所有请求登录的code与channel关系
@@ -84,7 +85,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void scanSuccess(Integer loginCode) {
         Channel channel = WAIT_LOGIN_MAP.get(loginCode);
         if(ObjectUtil.isNotNull(channel)){
-            sendMsg(channel,webSocketAdapter.buildScanSuccessResp());
+            sendMsg(channel,WebSocketAdapter.buildScanSuccessResp());
         }
     }
 
@@ -117,7 +118,7 @@ public class WebSocketServiceImpl implements WebSocketService {
            loginSuccess(channel,user,token);
        }else{
            //告知前端该token已失效
-           sendMsg(channel,webSocketAdapter.buildInvalidTokenResp());
+           sendMsg(channel,WebSocketAdapter.buildInvalidTokenResp());
        }
 
     }
@@ -133,7 +134,7 @@ public class WebSocketServiceImpl implements WebSocketService {
             if(Objects.nonNull(skipUid) && skipUid.equals(wsChannelUserDto.getId()))
                 return;
             //使用线程池发送消息
-            chatExecutor.execute(() -> sendMsg(channel,wsBaseResp));
+            websocketExecutor.execute(() -> sendMsg(channel,wsBaseResp));
         }));
     }
 
@@ -142,6 +143,13 @@ public class WebSocketServiceImpl implements WebSocketService {
         CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
         channels.forEach(channel -> {
             sendMsg(channel,wsBaseResp);
+        });
+    }
+
+    @Override
+    public void sendToUserList(List<Long> uidList, WsBaseResp wsBaseResp) {
+        uidList.forEach(uid -> {
+            websocketExecutor.execute(() -> sendToUser(uid,wsBaseResp));
         });
     }
 
@@ -161,7 +169,7 @@ public class WebSocketServiceImpl implements WebSocketService {
 
         //发送用户信息
         boolean hasPower = roleService.hasPower(user.getId(), RoleEnum.CHAT_MANAGER);
-        sendMsg(channel,webSocketAdapter.buildLoginSuccessResp(user,token,hasPower));
+        sendMsg(channel,WebSocketAdapter.buildLoginSuccessResp(user,token,hasPower));
         //发送用户上线信息
         String ip = NettyUtil.get(channel, NettyUtil.IP);
         user.setLastLoginTime(new Date());
@@ -192,7 +200,7 @@ public class WebSocketServiceImpl implements WebSocketService {
             throw new RuntimeException(e);
         }
         //发送给前端
-        sendMsg(channel,webSocketAdapter.buildQrcodeResp(wxMpQrCodeTicket));
+        sendMsg(channel,WebSocketAdapter.buildQrcodeResp(wxMpQrCodeTicket));
     }
 
     private Integer generateCode(Channel channel) {

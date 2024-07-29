@@ -28,13 +28,4 @@ public class CursorPageBaseReq {
 
     @Schema(title = "游标（初始为null，后续请求附带上次翻页的游标）")
     private String cursor;
-
-    public Page plusPage() {
-        return new Page(1, this.pageSize, false);
-    }
-
-    @JsonIgnore
-    public Boolean isFirstPage() {
-        return StringUtils.isEmpty(cursor);
-    }
 }

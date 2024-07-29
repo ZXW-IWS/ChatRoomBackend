@@ -35,7 +35,7 @@ public interface MsgHandler {
     Long checkAndSaveMsg(ChatMessageReq chatMessageReq,Long uid);
 
     /**
-     * 展示消息
+     * 展示消息,向前端返回的消息体
      */
     Object showMsg(Message msg);
 

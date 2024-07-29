@@ -1,5 +1,6 @@
 package com.zuu.chatroom.common.service.impl;
 
+import com.zuu.chatroom.common.domain.dto.PushMsgDto;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.common.service.MqService;
 import jakarta.annotation.Resource;
@@ -51,8 +52,19 @@ public class MqServiceImpl implements MqService {
         rabbitTemplate.convertAndSend(APPLY_EXCHANGE_NAME,APPLY_KEY,applyId);
     }
 
+    /**
+     * @see com.zuu.chatroom.chat.listener.SendMsgListener
+     */
     @Override
     public void sendMsg(Long msgId) {
+        rabbitTemplate.convertAndSend(MESSAGE_EXCHANGE_NAME,MESSAGE_KEY,msgId);
+    }
 
+    /**
+     * @see com.zuu.chatroom.websocket.listener.PushListener
+     */
+    @Override
+    public void sendPushMsg(PushMsgDto pushMsgDto) {
+        rabbitTemplate.convertAndSend(WEBSOCKET_PUSH_EXCHANGE_NAME,WEBSOCKET_PUSH_KEY,pushMsgDto);
     }
 }

@@ -34,4 +34,10 @@ public class RedisConstant {
      */
     public static final String BLACK_LIST_KEY = BASE_KEY + "black";
     public static final int BLACK_LIST_TTL_MINUTES = 30;
+
+    /**
+     * 群组成员列表
+     */
+    public static final String GROUP_MEMBER_LIST_PREFIX = BASE_KEY + "group:";
+    public static final int GROUP_MEMBER_LIST_MINUTES = 30;
 }

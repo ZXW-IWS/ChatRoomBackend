@@ -1,7 +1,9 @@
 package com.zuu.chatroom.chat.service;
 
+import com.zuu.chatroom.chat.domain.vo.req.ChatMessagePageReq;
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessageReq;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
+import com.zuu.chatroom.common.domain.vo.resp.CursorPageBaseResp;
 
 /**
  * @Author zuu
@@ -19,4 +21,9 @@ public interface ChatService {
      * sendMsg方法执行完毕之后，用于组装消息的返回信息
      */
     ChatMessageResp getMsgResp(Long uid, Long msgId);
+
+    /**
+     * 分页查询消息列表
+     */
+    CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq chatMessagePageReq, Long uid);
 }

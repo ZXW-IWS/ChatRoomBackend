@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
  * @Date 2024/7/22 17:33
  */
 public class MessageAdapter {
+    public static List<ChatMessageResp> buildChatMessageBatchResp(Long uid, List<Message> messageList, List<MessageMark> messageMarkList) {
+
+        Map<Long, List<MessageMark>> markMap = Optional.ofNullable(messageMarkList)
+                .map(list -> list.stream().collect(Collectors.groupingBy(MessageMark::getMsgId)))
+                .orElse(new HashMap<>());
+
+        return messageList.stream()
+                .map(message -> buildChatMessageResp(uid, message, markMap.get(message.getId())))
+                .sorted(Comparator.comparing(a -> a.getMessage().getSendTime()))//帮前端排好序，更方便它展示
+                .toList();
+    }
+
     public static ChatMessageResp buildChatMessageResp(Long uid, Message message, List<MessageMark> messageMarkList) {
         ChatMessageResp chatMessageResp = new ChatMessageResp();
         ChatMessageResp.UserInfo userInfo = new ChatMessageResp.UserInfo();
@@ -48,7 +60,9 @@ public class MessageAdapter {
 
     private static ChatMessageResp.MessageMark buildMessageMarkInfo(Long uid, Message message, List<MessageMark> messageMarkList) {
         //获取messageMark中的点赞和举报的用户id集合
-        Map<Integer, List<MessageMark>> markMap = messageMarkList.stream().collect(Collectors.groupingBy(MessageMark::getType));
+        Map<Integer, List<MessageMark>> markMap = Optional.ofNullable(messageMarkList)
+                .map(list -> list.stream().collect(Collectors.groupingBy(MessageMark::getType)))
+                .orElse(new HashMap<>());
         Set<Long> likedUidSet = Optional.ofNullable(markMap.get(MsgMarkTypeEnum.LIKE.getType()))
                 .map(list -> list.stream().map(MessageMark::getUid).collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
@@ -81,3 +95,4 @@ public class MessageAdapter {
         return message;
     }
 }
+

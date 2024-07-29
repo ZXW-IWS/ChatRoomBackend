@@ -1,5 +1,6 @@
 package com.zuu.chatroom.websocket.service.adapter;
 
+import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseRespTypeEnum;
@@ -29,26 +30,34 @@ public class WebSocketAdapter {
         return wsBaseResp;
     }
 
-    public  WsBaseResp buildInvalidTokenResp() {
+    public static WsBaseResp buildMsgSendResp(ChatMessageResp msgResp) {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.MESSAGE.getType());
+        wsBaseResp.setData(msgResp);
+
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp buildInvalidTokenResp() {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.INVALIDATE_TOKEN.getType());
         return wsBaseResp;
     }
 
-    public WsBaseResp buildScanSuccessResp() {
+    public static WsBaseResp buildScanSuccessResp() {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_SCAN_SUCCESS.getType());
         return wsBaseResp;
     }
 
-    public WsBaseResp buildQrcodeResp(WxMpQrCodeTicket wxMpQrCodeTicket){
+    public static WsBaseResp buildQrcodeResp(WxMpQrCodeTicket wxMpQrCodeTicket){
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_URL.getType());
         wsBaseResp.setData(new WsQrcodeResp(wxMpQrCodeTicket.getUrl()));
         return wsBaseResp;
     }
 
-    public WsBaseResp buildLoginSuccessResp(User user, String token, boolean hasPower) {
+    public static WsBaseResp buildLoginSuccessResp(User user, String token, boolean hasPower) {
         WsBaseResp wsBaseResp = new WsBaseResp();
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_SUCCESS.getType());
         WsLoginSuccess wsLoginSuccess = new WsLoginSuccess(user,token,hasPower);

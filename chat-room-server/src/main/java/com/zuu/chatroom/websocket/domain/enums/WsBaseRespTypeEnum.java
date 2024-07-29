@@ -3,6 +3,7 @@ package com.zuu.chatroom.websocket.domain.enums;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsFriendApply;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsBlack;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsLoginSuccess;
+import com.zuu.chatroom.websocket.domain.vo.resp.WsMessage;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public enum WsBaseRespTypeEnum {
     LOGIN_URL(1, "登录二维码返回", String.class),
     LOGIN_SCAN_SUCCESS(2, "用户扫描成功等待授权", null),
     LOGIN_SUCCESS(3, "用户登录成功返回用户信息", WsLoginSuccess.class),
-    //MESSAGE(4, "新消息", WSMessage.class),
+    MESSAGE(4, "新消息", WsMessage.class),
     //ONLINE_OFFLINE_NOTIFY(5, "上下线通知", WSOnlineOfflineNotify.class),
     INVALIDATE_TOKEN(6, "使前端的token失效，意味着前端需要重新登录", null),
     BLACK(7, "拉黑用户", WsBlack.class),

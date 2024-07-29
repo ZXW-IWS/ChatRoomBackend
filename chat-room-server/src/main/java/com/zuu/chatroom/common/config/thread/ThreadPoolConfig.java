@@ -22,7 +22,10 @@ public class ThreadPoolConfig implements AsyncConfigurer {
      * 项目共用线程池
      */
     public static final String CHAT_EXECUTOR = "chatExecutor";
-
+    /**
+     * websocket通信线程池
+     */
+    public static final String WS_EXECUTOR = "websocketExecutor";
     @Override
     public Executor getAsyncExecutor() {
         return chatExecutor();
@@ -37,6 +40,19 @@ public class ThreadPoolConfig implements AsyncConfigurer {
         executor.setQueueCapacity(200);
         executor.setThreadNamePrefix("chatroom-executor-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());//满了调用线程执行，认为重要任务
+        executor.setThreadFactory(new MyThreadFactory(executor));
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(WS_EXECUTOR)
+    public ThreadPoolTaskExecutor websocketExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(200);
+        executor.setThreadNamePrefix("websocket-executor-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());//满了直接丢弃，默认为不重要消息推送
         executor.setThreadFactory(new MyThreadFactory(executor));
         executor.initialize();
         return executor;

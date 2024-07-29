@@ -4,6 +4,8 @@ import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.websocket.domain.vo.resp.WsBaseResp;
 import io.netty.channel.Channel;
 
+import java.util.List;
+
 /**
  * @Author zuu
  * @Description
@@ -30,4 +32,6 @@ public interface WebSocketService {
     void sendToAllOnlineUser(WsBaseResp wsBaseResp, Long skipUid);
 
     void sendToUser(Long uid,WsBaseResp wsBaseResp);
+
+    void sendToUserList(List<Long> uidList, WsBaseResp wsBaseResp);
 }

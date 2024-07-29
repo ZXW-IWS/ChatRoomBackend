@@ -33,4 +33,18 @@ public class RabbitMqConstant {
     public static final String APPLY_EXCHANGE_NAME = "apply.direct";
     public static final String APPLY_KEY = "apply";
     public static final String APPLY_QUEUE_NAME = "apply.queue";
+
+    /**
+     * 消息发送成功消息队列
+     */
+    public static final String MESSAGE_EXCHANGE_NAME = "message.direct";
+    public static final String MESSAGE_KEY = "message";
+    public static final String MESSAGE_QUEUE_NAME = "message.queue";
+
+    /**
+     * 向websocket服务发送消息消息队列
+     */
+    public static final String WEBSOCKET_PUSH_EXCHANGE_NAME = "websocket.push.direct";
+    public static final String WEBSOCKET_PUSH_KEY = "websocket.push";
+    public static final String WEBSOCKET_PUSH_QUEUE_NAME = "websocket.push.queue";
 }
