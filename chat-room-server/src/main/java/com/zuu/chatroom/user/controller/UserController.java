@@ -59,7 +59,7 @@ public class UserController {
     @PutMapping("/badge")
     @Operation(summary = "用户徽章佩戴徽章")
     public ApiResult<Void> wearBadge(@Valid @RequestBody WearingBadgeReq wearingBadgeReq){
-        userService.wearBadge(RequestHolder.get().getId(),wearingBadgeReq.getId());
+        userService.wearBadge(RequestHolder.get().getId(),wearingBadgeReq.getBadgeId());
         return ApiResult.success();
     }
     @PutMapping("/black")

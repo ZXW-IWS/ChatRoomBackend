@@ -123,8 +123,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User fillUserInfo(WxOAuth2UserInfo userInfo) {
         User user = this.getOne(new QueryWrapper<User>().eq("openid", userInfo.getOpenid()));
         if(ObjectUtil.isNull(user)){
-            //TODO: 异常
-            return null;
+            throw new BusinessException("用户不存在");
         }
         //若用户头像昵称不为空，就不需要更新用户信息
         if(StrUtil.isAllNotBlank(user.getNickname(),user.getAvatar())){
@@ -134,8 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setNickname(userInfo.getNickname());
         user.setAvatar(userInfo.getHeadImgUrl());
         user.setSex(userInfo.getSex());
-        boolean updated = this.updateById(user);
-        //TODO: 异常
+        this.updateById(user);
         return user;
     }
 
@@ -275,7 +273,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public List<ItemInfoDTO> getItemInfo(ItemInfoReq req) {
         return req.getReqList().stream().map(infoReq -> {
             Item item = itemService.getById(infoReq.getItemId());
-            if (item.getUpdateTime().getTime() > infoReq.getLastModifyTime()) {
+            if (Objects.isNull(infoReq.getLastModifyTime()) || item.getUpdateTime().getTime() > infoReq.getLastModifyTime()) {
                 ItemInfoDTO itemInfoDTO = new ItemInfoDTO();
                 itemInfoDTO.setItemId(item.getId());
                 itemInfoDTO.setNeedRefresh(Boolean.FALSE);
@@ -329,9 +327,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Set<Long> res = new HashSet<>();
         userList.forEach(user -> {
             long lastUpdateTime = user.getUpdateTime().getTime();
-            long lastUpdateTimeFromReq = lastModifyMap.get(user.getId());
+            Long lastUpdateTimeFromReq = lastModifyMap.get(user.getId());
             //判断是否需要更新
-            if(lastUpdateTime <= lastUpdateTimeFromReq){
+            if(Objects.isNull(lastUpdateTimeFromReq) || lastUpdateTime > lastUpdateTimeFromReq){
                 res.add(user.getId());
             }
         });

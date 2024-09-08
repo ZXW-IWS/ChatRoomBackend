@@ -5,9 +5,7 @@ import com.zuu.chatroom.common.interceptor.RequestInfoInterceptor;
 import com.zuu.chatroom.common.interceptor.TokenInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.List;
  * @Date 2024/7/14 12:59
  */
 @Configuration
-public class InterceptorConfig extends WebMvcConfigurationSupport {
+public class InterceptorConfig implements WebMvcConfigurer {
     @Resource
     private TokenInterceptor tokenInterceptor;
     @Resource
@@ -68,4 +66,16 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+
+    // 配置全局的CORS
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")  // 允许所有路径
+                .allowedOriginPatterns("*")  // 允许所有来源
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // 允许的请求方法
+                .allowedHeaders("*")  // 允许所有头部
+                .allowCredentials(true)  // 允许凭据
+                .maxAge(3600);  // 预检请求的缓存时间
+    }
+
 }

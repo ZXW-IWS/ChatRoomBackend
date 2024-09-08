@@ -1,11 +1,14 @@
 package com.zuu.chatroom.chat.listener;
 
+import com.zuu.chatroom.chat.domain.dto.MsgRecallDto;
 import com.zuu.chatroom.chat.domain.enums.RoomTypeEnum;
 import com.zuu.chatroom.chat.domain.po.Message;
 import com.zuu.chatroom.chat.domain.po.Room;
 import com.zuu.chatroom.chat.domain.po.RoomFriend;
-import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
-import com.zuu.chatroom.chat.service.*;
+import com.zuu.chatroom.chat.service.GroupMemberService;
+import com.zuu.chatroom.chat.service.MessageService;
+import com.zuu.chatroom.chat.service.RoomFriendService;
+import com.zuu.chatroom.chat.service.RoomService;
 import com.zuu.chatroom.common.domain.dto.PushMsgDto;
 import com.zuu.chatroom.common.service.MqService;
 import com.zuu.chatroom.websocket.service.adapter.WebSocketAdapter;
@@ -27,14 +30,14 @@ import static com.zuu.chatroom.common.constant.RabbitMqConstant.*;
 /**
  * @Author zuu
  * @Description
- * @Date 2024/7/26 11:56
+ * @Date 2024/9/8 21:07
  */
 @Component
 @Slf4j
-public class SendMsgListener {
+public class MsgRecallListener {
 
     @Resource
-    private MessageService messageService;
+    MessageService messageService;
     @Resource
     private RoomService roomService;
     @Resource
@@ -43,26 +46,24 @@ public class SendMsgListener {
     private GroupMemberService groupMemberService;
     @Resource
     private MqService mqService;
-    @Resource
-    private ContactService contactService;
-    @Resource
-    private ChatService chatService;
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = MESSAGE_QUEUE_NAME,durable = "true"),
-            exchange = @Exchange(name = MESSAGE_EXCHANGE_NAME),
-            key = MESSAGE_KEY
+            value = @Queue(name = MESSAGE_RECALL_QUEUE_NAME,durable = "true"),
+            exchange = @Exchange(name = MESSAGE_RECALL_EXCHANGE_NAME),
+            key = MESSAGE_RECALL_KEY
     ))
-    public void rcvSendMsgHandler(Long msgId){
-        log.info("receive message send,the message id is:[{}]",msgId);
-        //1. 根据这条消息的id以及创建时间来更新room表中的最后一条消息的id以及最后一条消息的时间两个信息。
+    public void rcvMsgRecallHandler(MsgRecallDto msgRecallDto){
+        Long msgId = msgRecallDto.getMsgId();
+        Long roomId = msgRecallDto.getRoomId();
+        Long recallUid = msgRecallDto.getRecallUid();
+
+        log.info("receive message recalled,the message id is:[{}]",msgId);
         Message message = messageService.getById(msgId);
         if(Objects.isNull(message)){
-            log.error("receive messageId,but this message is null.the message id is:[{}]",msgId);
+            log.error("receive message recalled,but this message is null.the message id is:[{}]",msgId);
             return;
         }
         Room room = roomService.getById(message.getRoomId());
-        roomService.updateLaseMessageInfo(message.getRoomId(),message.getId(),message.getCreateTime());
-        //2. 更新当前房间中所有人（每个uid和roomId对应一个唯一的会话）中的所有的会话的最后一条消息id和时间，若是没有会话的话就直接插入即可。
+        //获取房间的用户列表
         List<Long> roomMemberUidList = new ArrayList<>();
         if(Objects.equals(room.getType(), RoomTypeEnum.FRIEND.getType())){
             //私聊
@@ -72,10 +73,6 @@ public class SendMsgListener {
             //群聊
             roomMemberUidList = groupMemberService.getGroupMemberList(room.getId());
         }
-        contactService.refreshOrCreateActiveTime(room.getId(),roomMemberUidList,message.getId(),message.getCreateTime());
-        //3. 将这条消息所封装的响应信息通过websocket通知给该房间里所有在线的用户（若是私聊房间就是推送给对应的两个用户）
-        // 消息发送时传入uid为null,默认所有用户都没有点赞和举报
-        ChatMessageResp msgResp = chatService.getMsgResp(null, msgId);
-        mqService.sendPushMsg(new PushMsgDto(roomMemberUidList, WebSocketAdapter.buildMsgSendResp(msgResp)));
+        mqService.sendPushMsg(new PushMsgDto(roomMemberUidList, WebSocketAdapter.buildMsgRecallResp(msgRecallDto)));
     }
 }

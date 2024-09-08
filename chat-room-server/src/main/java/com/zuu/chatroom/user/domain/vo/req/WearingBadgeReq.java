@@ -15,5 +15,5 @@ import org.hibernate.validator.constraints.Length;
 public class WearingBadgeReq {
     @Schema(title = "徽章id")
     @NotNull
-    private Long id;
+    private Long badgeId;
 }

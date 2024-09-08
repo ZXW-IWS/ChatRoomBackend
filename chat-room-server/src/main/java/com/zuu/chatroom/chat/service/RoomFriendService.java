@@ -11,4 +11,14 @@ import com.zuu.chatroom.chat.domain.po.RoomFriend;
 public interface RoomFriendService extends IService<RoomFriend> {
 
     RoomFriend geyByRoomId(Long roomId);
+
+    RoomFriend getFriendRoom(Long uid, Long friendId);
+
+    RoomFriend getByKey(String roomKey);
+
+    void restoreRoom(Long id);
+
+    RoomFriend createFriendRoom(Long roomId, Long uid, Long friendId);
+
+    void banRoomByKey(String roomKey);
 }

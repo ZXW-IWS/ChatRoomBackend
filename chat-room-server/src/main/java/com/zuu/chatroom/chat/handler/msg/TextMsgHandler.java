@@ -67,6 +67,6 @@ public class TextMsgHandler implements MsgHandler {
 
     @Override
     public String showContactMsg(Message msg) {
-        return null;
+        return msg.getContent();
     }
 }

@@ -22,7 +22,7 @@ public class MessageExtra implements Serializable {
     //url跳转链接
     private Map<String, UrlInfo> urlContentMap;
     //消息撤回详情
-    //private MsgRecall recall;
+    private MsgRecall recall;
     //艾特的uid
     private List<Long> atUidList;
     ////文件消息

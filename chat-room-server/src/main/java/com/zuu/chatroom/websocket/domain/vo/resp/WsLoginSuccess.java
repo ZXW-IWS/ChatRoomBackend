@@ -15,14 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WsLoginSuccess {
-    private Long id;
+    private Long uid;
     private String avatar;
     private String token;
     private String name;
     //用户权限 0普通用户 1超管
     private Integer power;
     public WsLoginSuccess(User user, String token, boolean hasPower){
-        this.id = user.getId();
+        this.uid = user.getId();
         this.avatar = user.getAvatar();
         this.name = user.getNickname();
         this.token = token;

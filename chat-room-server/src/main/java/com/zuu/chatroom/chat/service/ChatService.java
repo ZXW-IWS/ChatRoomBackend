@@ -2,6 +2,7 @@ package com.zuu.chatroom.chat.service;
 
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessagePageReq;
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessageReq;
+import com.zuu.chatroom.chat.domain.vo.req.RecallMsgReq;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.common.domain.vo.resp.CursorPageBaseResp;
 
@@ -26,4 +27,6 @@ public interface ChatService {
      * 分页查询消息列表
      */
     CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq chatMessagePageReq, Long uid);
+
+    void recallMsg(Long uid, RecallMsgReq recallMsgReq);
 }

@@ -42,6 +42,13 @@ public class RabbitMqConstant {
     public static final String MESSAGE_QUEUE_NAME = "message.queue";
 
     /**
+     * 消息撤回消息队列
+     */
+    public static final String MESSAGE_RECALL_EXCHANGE_NAME = "message.recall.direct";
+    public static final String MESSAGE_RECALL_KEY = "message.recall";
+    public static final String MESSAGE_RECALL_QUEUE_NAME = "message.recall.queue";
+
+    /**
      * 向websocket服务发送消息消息队列
      */
     public static final String WEBSOCKET_PUSH_EXCHANGE_NAME = "websocket.push.direct";

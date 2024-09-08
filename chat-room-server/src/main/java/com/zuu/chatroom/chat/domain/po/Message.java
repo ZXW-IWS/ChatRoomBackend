@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.zuu.chatroom.chat.domain.entity.MessageExtra;
 import lombok.Data;
 
 /**
@@ -59,7 +62,8 @@ public class Message implements Serializable {
     /**
      * 扩展信息
      */
-    private Object extra;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private MessageExtra extra;
 
     /**
      * 创建时间

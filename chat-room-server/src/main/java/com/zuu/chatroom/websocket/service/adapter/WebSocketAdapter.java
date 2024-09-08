@@ -1,13 +1,12 @@
 package com.zuu.chatroom.websocket.service.adapter;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.zuu.chatroom.chat.domain.dto.MsgRecallDto;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseRespTypeEnum;
-import com.zuu.chatroom.websocket.domain.vo.resp.WsBaseResp;
-import com.zuu.chatroom.websocket.domain.vo.resp.WsFriendApply;
-import com.zuu.chatroom.websocket.domain.vo.resp.WsLoginSuccess;
-import com.zuu.chatroom.websocket.domain.vo.resp.WsQrcodeResp;
+import com.zuu.chatroom.websocket.domain.vo.resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +61,17 @@ public class WebSocketAdapter {
         wsBaseResp.setType(WsBaseRespTypeEnum.LOGIN_SUCCESS.getType());
         WsLoginSuccess wsLoginSuccess = new WsLoginSuccess(user,token,hasPower);
         wsBaseResp.setData(wsLoginSuccess);
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp buildMsgRecallResp(MsgRecallDto msgRecallDto) {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+
+        wsBaseResp.setType(WsBaseRespTypeEnum.RECALL.getType());
+        WSMsgRecall wsMsgRecall = new WSMsgRecall();
+        BeanUtil.copyProperties(msgRecallDto,wsMsgRecall);
+        wsBaseResp.setData(wsMsgRecall);
+
         return wsBaseResp;
     }
 }

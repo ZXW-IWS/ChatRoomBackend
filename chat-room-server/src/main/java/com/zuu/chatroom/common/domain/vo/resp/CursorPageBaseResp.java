@@ -37,7 +37,11 @@ public class CursorPageBaseResp<T> {
         cursorPageBaseResp.setCursor(cursorPage.getCursor());
         return cursorPageBaseResp;
     }
-
+    public static <T> CursorPageBaseResp<T> init( List<T> list) {
+        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<T>();
+        cursorPageBaseResp.setList(list);
+        return cursorPageBaseResp;
+    }
     @JsonIgnore
     public Boolean isEmpty() {
         return CollectionUtil.isEmpty(list);

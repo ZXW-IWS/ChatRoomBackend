@@ -2,6 +2,8 @@ package com.zuu.chatroom.chat.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zuu.chatroom.chat.domain.po.Contact;
+import com.zuu.chatroom.chat.domain.vo.resp.ChatRoomResp;
+import com.zuu.chatroom.common.domain.vo.resp.CursorPageBaseResp;
 
 import java.util.Date;
 import java.util.List;
@@ -16,4 +18,10 @@ public interface ContactService extends IService<Contact> {
     void refreshOrCreateActiveTime(Long roomId, List<Long> roomMemberUidList, Long msgId, Date msgSendTime);
 
     Long getContactLastMsgId(Long roomId, Long uid);
+
+    CursorPageBaseResp<ChatRoomResp> getContactList(Long uid);
+
+    ChatRoomResp getContactDetail(Long uid, long roomId);
+
+    ChatRoomResp getContactDetailByFriend(Long uid, Long friendId);
 }

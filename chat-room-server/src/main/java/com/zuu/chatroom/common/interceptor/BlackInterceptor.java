@@ -40,7 +40,7 @@ public class BlackInterceptor implements HandlerInterceptor {
             return false;
         }
         //检查用户id是否在黑名单内
-        if(inBlackList(requestInfo.getId().toString(),blackMap.get(BlackTypeEnum.UID.getType()))){
+        if(Objects.nonNull(requestInfo.getId()) && inBlackList(requestInfo.getId().toString(),blackMap.get(BlackTypeEnum.UID.getType()))){
             //返回401未登录
             HttpErrorEnum.NO_LOGIN.sendErrorResp(response);
             return false;

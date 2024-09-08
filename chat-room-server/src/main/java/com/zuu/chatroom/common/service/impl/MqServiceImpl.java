@@ -1,5 +1,6 @@
 package com.zuu.chatroom.common.service.impl;
 
+import com.zuu.chatroom.chat.domain.dto.MsgRecallDto;
 import com.zuu.chatroom.common.domain.dto.PushMsgDto;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.common.service.MqService;
@@ -66,5 +67,13 @@ public class MqServiceImpl implements MqService {
     @Override
     public void sendPushMsg(PushMsgDto pushMsgDto) {
         rabbitTemplate.convertAndSend(WEBSOCKET_PUSH_EXCHANGE_NAME,WEBSOCKET_PUSH_KEY,pushMsgDto);
+    }
+
+    /**
+     * @see com.zuu.chatroom.chat.listener.MsgRecallListener
+     */
+    @Override
+    public void sendRecallMsg(MsgRecallDto msgRecallDto) {
+        rabbitTemplate.convertAndSend(MESSAGE_RECALL_EXCHANGE_NAME,MESSAGE_RECALL_KEY,msgRecallDto);
     }
 }

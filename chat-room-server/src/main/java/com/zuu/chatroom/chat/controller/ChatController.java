@@ -2,6 +2,7 @@ package com.zuu.chatroom.chat.controller;
 
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessagePageReq;
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessageReq;
+import com.zuu.chatroom.chat.domain.vo.req.RecallMsgReq;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.chat.service.ChatService;
 import com.zuu.chatroom.common.domain.vo.resp.ApiResult;
@@ -40,5 +41,11 @@ public class ChatController {
         return ApiResult.success(msgPage);
     }
 
+    @PutMapping("/msg/recall")
+    @Operation(summary = "撤回消息")
+    public ApiResult<Void> recallMsg(@Valid @RequestBody RecallMsgReq recallMsgReq) {
+        chatService.recallMsg(RequestHolder.get().getId(), recallMsgReq);
+        return ApiResult.success();
+    }
 
 }

@@ -1,6 +1,10 @@
 package com.zuu.chatroom.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zuu.chatroom.chat.domain.po.RoomFriend;
+import com.zuu.chatroom.chat.service.ChatService;
+import com.zuu.chatroom.chat.service.RoomService;
+import com.zuu.chatroom.chat.service.adapter.MessageAdapter;
 import com.zuu.chatroom.common.annotation.RedissonLock;
 import com.zuu.chatroom.common.domain.vo.req.PageBaseReq;
 import com.zuu.chatroom.common.domain.vo.resp.PageBaseResp;
@@ -41,6 +45,10 @@ public class FriendServiceImpl implements FriendService {
     UserService userService;
     @Resource
     MqService mqService;
+    @Resource
+    RoomService roomService;
+    @Resource
+    ChatService chatService;
     @Override
     public List<FriendResp> friendList(Long uid) {
         //1. 获取用户的好友列表
@@ -117,7 +125,10 @@ public class FriendServiceImpl implements FriendService {
         //创建好友关系
         userFriendService.createFriend(uid,userApply.getUid());
 
-        //TODO:为两个用户创建一个新的房间并发送打招呼的消息
+        //为两个用户创建一个房间
+        RoomFriend roomFriend = roomService.createFriendRoom(uid,userApply.getUid());
+        //发送打招呼的消息
+        chatService.sendMsg(uid, MessageAdapter.buildAgreeMsg(roomFriend.getRoomId()));
     }
 
     @Override
@@ -129,7 +140,8 @@ public class FriendServiceImpl implements FriendService {
             throw new BusinessException("你们不是好友哦~");
         List<Long> userFriendIds = userFriendList.stream().map(UserFriend::getId).toList();
         userFriendService.removeBatchByIds(userFriendIds);
-        //TODO:禁用房间
+        //禁用房间
+        roomService.banFriendRoom(uid,targetUid);
     }
 
     @Override

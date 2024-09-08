@@ -7,6 +7,7 @@ import com.zuu.chatroom.chat.domain.enums.MsgTypeEnum;
 import com.zuu.chatroom.chat.domain.po.Message;
 import com.zuu.chatroom.chat.domain.po.MessageMark;
 import com.zuu.chatroom.chat.domain.vo.req.ChatMessageReq;
+import com.zuu.chatroom.chat.domain.vo.req.TextMsgReq;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.chat.handler.factory.MsgHandlerFactory;
 import com.zuu.chatroom.chat.handler.msg.MsgHandler;
@@ -93,6 +94,20 @@ public class MessageAdapter {
         message.setType(chatMessageReq.getMsgType());
 
         return message;
+    }
+
+    public static ChatMessageReq buildAgreeMsg(Long roomId) {
+        ChatMessageReq chatMessageReq = new ChatMessageReq();
+
+        chatMessageReq.setRoomId(roomId);
+        chatMessageReq.setMsgType(MsgTypeEnum.TEXT.getType());
+
+        //TextHandler的checkAndSave方法需要进行对应的验证，所以这里的body需要是TextMsgReq对象
+        TextMsgReq textMsgReq = new TextMsgReq();
+        textMsgReq.setContent("我们已经是好友了，开始聊天吧～");
+        chatMessageReq.setBody(textMsgReq);
+
+        return chatMessageReq;
     }
 }
 

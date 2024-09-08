@@ -4,6 +4,7 @@ import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.user.domain.vo.resp.FriendApplyResp;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author zuu
@@ -11,6 +12,7 @@ import java.util.List;
  * @Date 2024/7/18 21:31
  */
 public class FriendAdapter {
+
     public static List<FriendApplyResp> buildPageApplyResp(List<UserApply> records) {
         return records.stream().map(userApply -> {
             FriendApplyResp friendApplyResp = new FriendApplyResp();
@@ -22,4 +24,5 @@ public class FriendAdapter {
             return friendApplyResp;
         }).toList();
     }
+
 }

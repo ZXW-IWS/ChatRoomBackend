@@ -28,7 +28,12 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-       String token = getToken(request);
+        //拦截器取到请求先进行判断，如果是OPTIONS请求，则放行
+        if("OPTIONS".equals(request.getMethod().toUpperCase())) {
+            return true;
+        }
+
+        String token = getToken(request);
        if(Objects.nonNull(token)){
            //用户已登录
            Long id = userService.getIdByToken(token);
