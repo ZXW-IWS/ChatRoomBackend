@@ -210,7 +210,6 @@ public class GroupServiceImpl implements GroupService {
         //5. 通过sendMsg方法向群聊中发送消息（XX邀请了XX,XX,XX...加入群聊）
         chatService.sendMsg(user.getId(), MessageAdapter.buildGroupAddMsg(user, invitedUserList, room.getId()));
         //6. mq向用户发送群成员变动的消息（用于触发每个用户的会话创建）
-        //TODO: 测试后再判断这个地方不发送系统消息是否有bug
         invitedUserList.forEach(invitedUser -> {
             mqService.sendPushMsg(new PushMsgDto(noticeUidList, WebSocketAdapter.buildGroupAddAResp(invitedUser,room.getId())));
         });

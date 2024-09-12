@@ -2,9 +2,12 @@ package com.zuu.chatroom.chat.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.zuu.chatroom.chat.domain.dto.FileMsgDTO;
+import com.zuu.chatroom.chat.domain.dto.ImgMsgDTO;
+import com.zuu.chatroom.chat.domain.dto.SoundMsgDTO;
+import com.zuu.chatroom.chat.domain.dto.VideoMsgDTO;
 import com.zuu.chatroom.chat.domain.vo.resp.UrlInfo;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,13 +29,13 @@ public class MessageExtra implements Serializable {
     //艾特的uid
     private List<Long> atUidList;
     ////文件消息
-    //private FileMsgDTO fileMsg;
+    private FileMsgDTO fileMsgDTO;
     ////图片消息
-    //private ImgMsgDTO imgMsgDTO;
+    private ImgMsgDTO imgMsgDTO;
     ////语音消息
-    //private SoundMsgDTO soundMsgDTO;
+    private SoundMsgDTO soundMsgDTO;
     ////文件消息
-    //private VideoMsgDTO videoMsgDTO;
+    private VideoMsgDTO videoMsgDTO;
 
     /**
      * 表情图片信息

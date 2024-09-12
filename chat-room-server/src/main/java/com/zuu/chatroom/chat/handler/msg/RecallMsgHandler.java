@@ -72,7 +72,6 @@ public class RecallMsgHandler implements MsgHandler{
         recallMsg.setType(MsgTypeEnum.RECALL.getType());
         messageService.updateById(recallMsg);
 
-        //TODO:发送消息撤回到mq通知对应群组的用户
         mqService.sendRecallMsg(new MsgRecallDto(recallMsg.getId(),recallMsg.getRoomId(),recallUid));
     }
 }
