@@ -5,6 +5,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.zuu.chatroom.user.domain.dto.WsChannelUserDto;
 import com.zuu.chatroom.user.domain.enums.RoleEnum;
+import com.zuu.chatroom.user.domain.enums.UserActiveStatusEnum;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.common.service.MqService;
 import com.zuu.chatroom.user.service.RoleService;
@@ -181,10 +182,26 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void doOffline(Channel channel) {
         WsChannelUserDto wsChannelUserDto = ONLINE_WS_MAP.get(channel);
-
-        //TODO:用户离线逻辑处理,删除uid与channel对应关系
         ONLINE_WS_MAP.remove(channel);
-
+        if(Objects.isNull(wsChannelUserDto)){
+            return;
+        }
+        //用户是否在其他设备也在线
+        CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(wsChannelUserDto.getId());
+        if(!channels.isEmpty()){
+            channels.removeIf(ch -> Objects.equals(ch,channel));
+        }
+        boolean isAllOffline = channels.isEmpty();
+        if(!isAllOffline){
+            return;
+        }
+        //所有设备都不在线则下线用户
+        User update = new User();
+        update.setId(wsChannelUserDto.getId());
+        update.setActiveStatus(UserActiveStatusEnum.OFFLINE.getType());
+        update.setLastLoginTime(new Date());
+        userService.updateById(update);
+        this.sendToAllOnlineUser(WebSocketAdapter.buildUserOfflineResp(update),update.getId());
     }
 
     @Override

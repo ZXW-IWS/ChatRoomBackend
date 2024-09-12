@@ -3,12 +3,17 @@ package com.zuu.chatroom.websocket.service.adapter;
 import cn.hutool.core.bean.BeanUtil;
 import com.zuu.chatroom.chat.domain.dto.MsgRecallDto;
 import com.zuu.chatroom.chat.domain.enums.GroupMemberChangeEnum;
+import com.zuu.chatroom.chat.domain.vo.resp.ChatMemberResp;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
+import com.zuu.chatroom.user.domain.enums.UserActiveStatusEnum;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseRespTypeEnum;
 import com.zuu.chatroom.websocket.domain.vo.resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * @Author zuu
@@ -100,6 +105,24 @@ public class WebSocketAdapter {
         wsMemberChange.setChangeType(GroupMemberChangeEnum.ADD.getType());
         wsBaseResp.setData(wsMemberChange);
 
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp buildUserOfflineResp(User user) {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());
+
+        WSOnlineOfflineNotify wsOnlineOfflineNotify = new WSOnlineOfflineNotify();
+        //changeList
+        ChatMemberResp chatMemberResp = new ChatMemberResp();
+        chatMemberResp.setUid(user.getId());
+        chatMemberResp.setActiveStatus(UserActiveStatusEnum.OFFLINE.getType());
+        chatMemberResp.setLastOptTime(user.getLastLoginTime());
+        wsOnlineOfflineNotify.setChangeList(Collections.singletonList(chatMemberResp));
+        //在线人数前端重新请求获取即可
+        wsOnlineOfflineNotify.setOnlineNum(0L);
+
+        wsBaseResp.setData(wsOnlineOfflineNotify);
         return wsBaseResp;
     }
 }
