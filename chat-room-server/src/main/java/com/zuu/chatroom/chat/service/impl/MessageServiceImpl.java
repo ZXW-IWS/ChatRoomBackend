@@ -30,6 +30,15 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     public void delRoomMsg(Long roomId) {
         this.remove(new QueryWrapper<Message>().eq("room_id",roomId));
     }
+
+    @Override
+    public Integer getGapCount(Long roomId, Long replyMsgId, Long msgId) {
+        long count = this.count(new QueryWrapper<Message>()
+                .eq("room_id", roomId)
+                .gt("id", replyMsgId)
+                .lt("id", msgId));
+        return Long.valueOf(count).intValue();
+    }
 }
 
 
