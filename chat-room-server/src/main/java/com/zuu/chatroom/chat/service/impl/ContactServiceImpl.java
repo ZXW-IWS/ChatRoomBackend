@@ -93,6 +93,12 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact>
         return buildContact(List.of(roomFriend.getRoomId()),uid).get(0);
     }
 
+    @Override
+    @Transactional
+    public void removeContact(Long uid, Long roomId) {
+        this.remove(new QueryWrapper<Contact>().eq("uid",uid).eq("room_id",roomId));
+    }
+
     private List<ChatRoomResp> buildContact(List<Long> roomIds, Long uid) {
         return roomIds.stream().map(roomId -> {
             Room room = roomService.getById(roomId);

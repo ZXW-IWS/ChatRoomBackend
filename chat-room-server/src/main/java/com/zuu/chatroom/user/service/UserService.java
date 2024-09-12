@@ -100,4 +100,6 @@ public interface UserService extends IService<User> {
      * 懒加载时前端请求徽章信息
      */
     List<ItemInfoDTO> getItemInfo(ItemInfoReq req);
+
+    Long getOnlineCount(List<Long> uids);
 }

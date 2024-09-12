@@ -54,5 +54,12 @@ public class CursorPageBaseResp<T> {
         return cursorPageBaseResp;
     }
 
+    public static <T> CursorPageBaseResp<T> all(List<T> list){
+        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<>();
+        cursorPageBaseResp.setIsLast(Boolean.TRUE);
+        cursorPageBaseResp.setList(list);
+        return cursorPageBaseResp;
+    }
+
 }
 

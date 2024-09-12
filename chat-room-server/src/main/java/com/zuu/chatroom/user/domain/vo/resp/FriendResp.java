@@ -1,9 +1,8 @@
 package com.zuu.chatroom.user.domain.vo.resp;
 
-import com.zuu.chatroom.user.domain.enums.ChatActiveStatusEnum;
+import com.zuu.chatroom.user.domain.enums.UserActiveStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +19,7 @@ public class FriendResp {
     @Schema(title = "好友uid")
     private Long uid;
     /**
-     * @see ChatActiveStatusEnum
+     * @see UserActiveStatusEnum
      */
     @Schema(title = "在线状态 1在线 2离线")
     private Integer activeStatus;

@@ -3,6 +3,8 @@ package com.zuu.chatroom;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
+import com.zuu.chatroom.chat.domain.po.Message;
+import com.zuu.chatroom.chat.service.MessageService;
 import com.zuu.chatroom.common.domain.enums.IdempotentEnum;
 import com.zuu.chatroom.common.utils.RedisUtils;
 import com.zuu.chatroom.user.domain.entity.IpDetail;
@@ -48,12 +50,27 @@ class ChatRoomApplicationTest {
     IpServiceImpl ipService;
     @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    MessageService messageService;
     public static final long UID = 1L;
 
     @Test
     public void login(){
         String token = userService.login(1L);
         System.out.println("token = " + token);
+    }
+
+    @Test
+    public void loginAll(){
+        String token = userService.login(1L);
+        System.out.println("token1 = " + token);
+        token = userService.login(2L);
+        System.out.println("token2 = " + token);
+        token = userService.login(3L);
+        System.out.println("token3 = " + token);
+        token = userService.login(4L);
+        System.out.println("token4 = " + token);
+
     }
     
     @Test
@@ -161,5 +178,11 @@ class ChatRoomApplicationTest {
     public void setContainsNullTest(){
         Set<Integer> set = new HashSet<>();
         System.out.println(set.contains(null));
+    }
+
+    @Test
+    public void getExtraTest(){
+        Message message = messageService.getById(20);
+        System.out.println("message = " + message);
     }
 }

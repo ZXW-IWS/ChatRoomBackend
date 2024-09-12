@@ -1,9 +1,7 @@
 package com.zuu.chatroom.chat.domain.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,9 +11,10 @@ import lombok.Data;
 
 /**
  * 消息表
+ * autoResultMap确保extra的正常解析
  * @TableName message
  */
-@TableName(value ="message")
+@TableName(value ="message",autoResultMap = true)
 @Data
 public class Message implements Serializable {
     /**
@@ -65,6 +64,11 @@ public class Message implements Serializable {
     @TableField(typeHandler = JacksonTypeHandler.class)
     private MessageExtra extra;
 
+    /**
+     * 逻辑删除（0-未删除 1-删除）
+     */
+    @TableLogic
+    private Integer isDelete;
     /**
      * 创建时间
      */

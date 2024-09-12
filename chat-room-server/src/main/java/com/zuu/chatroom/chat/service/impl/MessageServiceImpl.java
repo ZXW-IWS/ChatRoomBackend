@@ -25,6 +25,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
                         .eq("room_id", roomId)
                         .gt(Objects.nonNull(lastMsgId),"id", lastMsgId));
     }
+
+    @Override
+    public void delRoomMsg(Long roomId) {
+        this.remove(new QueryWrapper<Message>().eq("room_id",roomId));
+    }
 }
 
 

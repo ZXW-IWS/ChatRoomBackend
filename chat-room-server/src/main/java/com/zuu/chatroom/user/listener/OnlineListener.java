@@ -1,6 +1,6 @@
 package com.zuu.chatroom.user.listener;
 
-import com.zuu.chatroom.user.domain.enums.ChatActiveStatusEnum;
+import com.zuu.chatroom.user.domain.enums.UserActiveStatusEnum;
 import com.zuu.chatroom.user.domain.po.User;
 import com.zuu.chatroom.user.service.IpService;
 import com.zuu.chatroom.user.service.UserService;
@@ -38,7 +38,7 @@ public class OnlineListener {
         updateUser.setId(user.getId());
         updateUser.setLastLoginTime(user.getLastLoginTime());
         updateUser.setIpInfo(user.getIpInfo());
-        updateUser.setActiveStatus(ChatActiveStatusEnum.ONLINE.getType());
+        updateUser.setActiveStatus(UserActiveStatusEnum.ONLINE.getType());
         //保存到数据库中
         userService.updateById(updateUser);
         //异步更新用户的详细ip信息

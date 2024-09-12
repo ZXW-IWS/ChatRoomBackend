@@ -32,4 +32,6 @@ public interface RoomService extends IService<Room> {
     Room createRoom(Integer roomType);
 
     void banFriendRoom(Long uid, Long friendId);
+
+    Boolean delGroupIfNeed(Long roomId,Long groupId);
 }

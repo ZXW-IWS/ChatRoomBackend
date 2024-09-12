@@ -11,4 +11,6 @@ import com.zuu.chatroom.chat.domain.po.Message;
 public interface MessageService extends IService<Message> {
 
     Integer getUnreadCount(Long roomId, Long lastMsgId);
+
+    void delRoomMsg(Long roomId);
 }

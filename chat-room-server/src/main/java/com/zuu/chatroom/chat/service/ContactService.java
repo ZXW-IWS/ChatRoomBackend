@@ -24,4 +24,6 @@ public interface ContactService extends IService<Contact> {
     ChatRoomResp getContactDetail(Long uid, long roomId);
 
     ChatRoomResp getContactDetailByFriend(Long uid, Long friendId);
+
+    void removeContact(Long uid, Long roomId);
 }

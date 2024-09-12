@@ -2,6 +2,9 @@ package com.zuu.chatroom.chat.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zuu.chatroom.chat.domain.po.RoomGroup;
+import com.zuu.chatroom.user.domain.po.User;
+
+import java.util.List;
 
 /**
 * @author zuu
@@ -11,4 +14,6 @@ import com.zuu.chatroom.chat.domain.po.RoomGroup;
 public interface RoomGroupService extends IService<RoomGroup> {
 
     RoomGroup getByRoomId(Long roomId);
+
+    RoomGroup createGroup(User user, Long roomId, List<User> userList);
 }

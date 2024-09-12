@@ -1,4 +1,4 @@
-package com.zuu.chatroom.common.domain.vo.req;
+package com.zuu.chatroom.chat.domain.vo.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -7,10 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class IdReqVO {
-    @Schema(title ="id")
+@NoArgsConstructor
+public class AtMemberListReq {
     @NotNull
-    private Long id;
+    @Schema(title ="房间id")
+    private Long roomId;
 }

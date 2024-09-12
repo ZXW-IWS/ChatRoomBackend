@@ -12,6 +12,7 @@ import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.chat.handler.factory.MsgHandlerFactory;
 import com.zuu.chatroom.chat.handler.msg.MsgHandler;
 import com.zuu.chatroom.common.domain.enums.YesOrNoEnum;
+import com.zuu.chatroom.user.domain.po.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,6 +107,20 @@ public class MessageAdapter {
         TextMsgReq textMsgReq = new TextMsgReq();
         textMsgReq.setContent("我们已经是好友了，开始聊天吧～");
         chatMessageReq.setBody(textMsgReq);
+
+        return chatMessageReq;
+    }
+
+    public static ChatMessageReq buildGroupAddMsg(User user, List<User> userList, Long roomId) {
+        ChatMessageReq chatMessageReq = new ChatMessageReq();
+        chatMessageReq.setRoomId(roomId);
+        chatMessageReq.setMsgType(MsgTypeEnum.SYSTEM.getType());
+        StringBuffer sb = new StringBuffer();
+        sb.append(user.getNickname())
+                .append("邀请了")
+                .append(userList.stream().map(User::getNickname).collect(Collectors.joining(",")))
+                .append("加入群聊");
+        chatMessageReq.setBody(sb.toString());
 
         return chatMessageReq;
     }

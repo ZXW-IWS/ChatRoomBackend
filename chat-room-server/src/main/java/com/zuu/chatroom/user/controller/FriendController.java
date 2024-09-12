@@ -41,9 +41,10 @@ public class FriendController {
     }
     @GetMapping("/page")
     @Operation(summary = "获取用户联系人列表")
-    public ApiResult<List<FriendResp>> friendList(){
+    public ApiResult<CursorPageBaseResp<FriendResp>> friendList(){
         Long uid = RequestHolder.get().getId();
-        return ApiResult.success(friendService.friendList(uid));
+        List<FriendResp> friendRespList = friendService.friendList(uid);
+        return ApiResult.success(CursorPageBaseResp.all(friendRespList));
     }
 
     @GetMapping("/apply/page")

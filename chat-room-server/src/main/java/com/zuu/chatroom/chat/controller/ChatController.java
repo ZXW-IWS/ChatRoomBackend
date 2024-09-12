@@ -14,6 +14,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 /**
  * @Author zuu
  * @Description
@@ -45,6 +47,30 @@ public class ChatController {
     @Operation(summary = "撤回消息")
     public ApiResult<Void> recallMsg(@Valid @RequestBody RecallMsgReq recallMsgReq) {
         chatService.recallMsg(RequestHolder.get().getId(), recallMsgReq);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/msg/mark")
+    @Operation(summary = "消息标记")
+    public ApiResult<Void> setMsgMark() {
+        return ApiResult.success();
+    }
+
+    @GetMapping("/msg/read/page")
+    @Operation(summary = "消息的已读未读列表")
+    public ApiResult<Void> getReadPage() {
+        return ApiResult.success();
+    }
+
+    @GetMapping("/msg/read")
+    @Operation(summary = "获取消息的已读未读总数")
+    public ApiResult<Void> getReadInfo() {
+        return ApiResult.success();
+    }
+
+    @PutMapping("/msg/read")
+    @Operation(summary = "消息阅读上报")
+    public ApiResult<Void> msgRead() {
         return ApiResult.success();
     }
 

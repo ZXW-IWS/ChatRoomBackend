@@ -7,10 +7,9 @@ import com.zuu.chatroom.chat.domain.enums.RoomFriendStatusEnum;
 import com.zuu.chatroom.chat.domain.enums.RoomTypeEnum;
 import com.zuu.chatroom.chat.domain.po.Room;
 import com.zuu.chatroom.chat.domain.po.RoomFriend;
+import com.zuu.chatroom.chat.domain.po.RoomGroup;
 import com.zuu.chatroom.chat.mapper.RoomMapper;
-import com.zuu.chatroom.chat.service.RoomFriendService;
-import com.zuu.chatroom.chat.service.RoomGroupService;
-import com.zuu.chatroom.chat.service.RoomService;
+import com.zuu.chatroom.chat.service.*;
 import com.zuu.chatroom.chat.service.adapter.RoomAdapter;
 import com.zuu.chatroom.common.domain.enums.YesOrNoEnum;
 import com.zuu.chatroom.common.exception.BusinessException;
@@ -40,6 +39,10 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     @Resource
     @Lazy
     RoomService roomService;
+    @Resource
+    MessageService messageService;
+    @Resource
+    GroupMemberService groupMemberService;
 
     @Override
     @Transactional
@@ -100,6 +103,22 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         }
         String key = RoomAdapter.generateKey(uid,friendId);
         roomFriendService.banRoomByKey(key);
+    }
+
+    @Override
+    @Transactional
+    public Boolean delGroupIfNeed(Long roomId,Long groupId) {
+        List<Long> groupMemberList = groupMemberService.getGroupMemberList(groupId);
+        if(groupMemberList.size() <= 1){
+            //删除房间(roomGroup已经删除过了)
+            this.removeById(roomId);
+            //删除群成员
+            groupMemberService.removeAllGroupMember(groupId);
+            //删除消息记录
+            messageService.delRoomMsg(roomId);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     private void restoreRoom(RoomFriend roomFriend) {

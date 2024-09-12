@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ChatActiveStatusEnum {
+public enum UserActiveStatusEnum {
     ONLINE(1, "在线"),
     OFFLINE(2, "离线")
     ;

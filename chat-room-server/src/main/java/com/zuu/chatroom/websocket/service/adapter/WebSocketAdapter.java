@@ -2,9 +2,9 @@ package com.zuu.chatroom.websocket.service.adapter;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.zuu.chatroom.chat.domain.dto.MsgRecallDto;
+import com.zuu.chatroom.chat.domain.enums.GroupMemberChangeEnum;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.user.domain.po.User;
-import com.zuu.chatroom.user.domain.po.UserApply;
 import com.zuu.chatroom.websocket.domain.enums.WsBaseRespTypeEnum;
 import com.zuu.chatroom.websocket.domain.vo.resp.*;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -71,6 +71,34 @@ public class WebSocketAdapter {
         WSMsgRecall wsMsgRecall = new WSMsgRecall();
         BeanUtil.copyProperties(msgRecallDto,wsMsgRecall);
         wsBaseResp.setData(wsMsgRecall);
+
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp buildMemberRemovedResp(Long roomId, Long deletedUid) {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.MEMBER_CHANGE.getType());
+
+        WSMemberChange wsMemberChange = new WSMemberChange();
+        wsMemberChange.setRoomId(roomId);
+        wsMemberChange.setUid(deletedUid);
+        wsMemberChange.setChangeType(GroupMemberChangeEnum.EXIT.getType());
+        wsBaseResp.setData(wsMemberChange);
+
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp buildGroupAddAResp(User invitedUser, Long roomId) {
+        WsBaseResp wsBaseResp = new WsBaseResp();
+        wsBaseResp.setType(WsBaseRespTypeEnum.MEMBER_CHANGE.getType());
+
+        WSMemberChange wsMemberChange = new WSMemberChange();
+        wsMemberChange.setUid(invitedUser.getId());
+        wsMemberChange.setActiveStatus(invitedUser.getActiveStatus());
+        wsMemberChange.setLastOptTime(invitedUser.getLastLoginTime());
+        wsMemberChange.setRoomId(roomId);
+        wsMemberChange.setChangeType(GroupMemberChangeEnum.ADD.getType());
+        wsBaseResp.setData(wsMemberChange);
 
         return wsBaseResp;
     }

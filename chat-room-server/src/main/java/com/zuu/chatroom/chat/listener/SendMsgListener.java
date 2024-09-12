@@ -4,6 +4,7 @@ import com.zuu.chatroom.chat.domain.enums.RoomTypeEnum;
 import com.zuu.chatroom.chat.domain.po.Message;
 import com.zuu.chatroom.chat.domain.po.Room;
 import com.zuu.chatroom.chat.domain.po.RoomFriend;
+import com.zuu.chatroom.chat.domain.po.RoomGroup;
 import com.zuu.chatroom.chat.domain.vo.resp.ChatMessageResp;
 import com.zuu.chatroom.chat.service.*;
 import com.zuu.chatroom.common.domain.dto.PushMsgDto;
@@ -40,6 +41,8 @@ public class SendMsgListener {
     @Resource
     private RoomFriendService roomFriendService;
     @Resource
+    private RoomGroupService roomGroupService;
+    @Resource
     private GroupMemberService groupMemberService;
     @Resource
     private MqService mqService;
@@ -70,7 +73,8 @@ public class SendMsgListener {
             roomMemberUidList = Arrays.asList(roomFriend.getUid1(),roomFriend.getUid2());
         }else{
             //群聊
-            roomMemberUidList = groupMemberService.getGroupMemberList(room.getId());
+            RoomGroup roomGroup = roomGroupService.getByRoomId(room.getId());
+            roomMemberUidList = groupMemberService.getGroupMemberList(roomGroup.getId());
         }
         contactService.refreshOrCreateActiveTime(room.getId(),roomMemberUidList,message.getId(),message.getCreateTime());
         //3. 将这条消息所封装的响应信息通过websocket通知给该房间里所有在线的用户（若是私聊房间就是推送给对应的两个用户）

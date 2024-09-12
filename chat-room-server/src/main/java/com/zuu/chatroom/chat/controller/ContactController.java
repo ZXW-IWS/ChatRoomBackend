@@ -38,14 +38,14 @@ public class ContactController {
     }
 
     @GetMapping("/public/contact/detail")
-    @Operation(summary = "会话详情")
+    @Operation(summary = "会话详情(发消息后需要刷新会话详情)")
     public ApiResult<ChatRoomResp> getContactDetail(@Valid IdReqVO request) {
         Long uid = RequestHolder.get().getId();
         return ApiResult.success(contactService.getContactDetail(uid, request.getId()));
     }
 
     @GetMapping("/public/contact/detail/friend")
-    @Operation(summary = "会话详情(联系人列表发消息用)")
+    @Operation(summary = "会话详情(给联系人发消息时使用创建会话)")
     public ApiResult<ChatRoomResp> getContactDetailByFriend(@Valid ContactFriendReq request) {
         Long uid = RequestHolder.get().getId();
         return ApiResult.success(contactService.getContactDetailByFriend(uid, request.getUid()));
