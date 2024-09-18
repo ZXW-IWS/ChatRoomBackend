@@ -54,12 +54,14 @@ public class SoundMsgHandler implements MsgHandler{
 
     @Override
     public Object showReplyMsg(Message msg) {
-        MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
-        return extra.getSoundMsgDTO();
+        //MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
+        //return extra.getSoundMsgDTO();
+
+        return "[语音消息]";
     }
 
     @Override
     public String showContactMsg(Message msg) {
-        return "[语音]";
+        return "[语音消息]";
     }
 }

@@ -2,10 +2,7 @@ package com.zuu.chatroom.chat.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.zuu.chatroom.chat.domain.dto.FileMsgDTO;
-import com.zuu.chatroom.chat.domain.dto.ImgMsgDTO;
-import com.zuu.chatroom.chat.domain.dto.SoundMsgDTO;
-import com.zuu.chatroom.chat.domain.dto.VideoMsgDTO;
+import com.zuu.chatroom.chat.domain.dto.*;
 import com.zuu.chatroom.chat.domain.vo.resp.UrlInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,5 +37,5 @@ public class MessageExtra implements Serializable {
     /**
      * 表情图片信息
      */
-    //private EmojisMsgDTO emojisMsgDTO;
+    private EmojisMsgDTO emojisMsgDTO;
 }

@@ -18,7 +18,6 @@
 
     <modules>
         <module>chat-room-server</module>
-        <module>chat-room-tools</module>
     </modules>
 
     <properties>
@@ -41,7 +40,7 @@
         <logstash-logback.version>7.2</logstash-logback.version>
         <minio.version>8.4.5</minio.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <netty-all.version>4.1.76.Final</netty-all.version>
         <weixin-java-mp.version>4.4.0</weixin-java-mp.version>
         <mybatis-plus-boot-starter3.version>3.5.5</mybatis-plus-boot-starter3.version>
@@ -52,11 +51,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.zuu</groupId>
-                <artifactId>chat-root-common-starter</artifactId>
-                <version>${version}</version>
-            </dependency>
+            <!--<dependency>-->
+            <!--    <groupId>com.zuu</groupId>-->
+            <!--    <artifactId></artifactId>-->
+            <!--    <version>${version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>

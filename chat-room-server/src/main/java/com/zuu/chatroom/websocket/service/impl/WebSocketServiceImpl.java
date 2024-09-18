@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import static com.zuu.chatroom.common.config.thread.ThreadPoolConfig.WS_EXECUTOR;
 
 /**
  * @Author zuu
@@ -51,7 +54,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     private MqService mqService;
     @Resource
     private RoleService roleService;
-    @Resource
+    @Resource(name = WS_EXECUTOR)
     private ThreadPoolTaskExecutor websocketExecutor;
 
     /**

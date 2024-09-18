@@ -13,6 +13,7 @@ import com.zuu.chatroom.user.service.IpService;
 import com.zuu.chatroom.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -20,6 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static com.zuu.chatroom.common.config.thread.ThreadPoolConfig.CHAT_EXECUTOR;
+import static com.zuu.chatroom.common.config.thread.ThreadPoolConfig.IP_EXECUTOR;
 
 /**
  * @Author zuu
@@ -33,13 +37,12 @@ public class IpServiceImpl implements IpService {
     public static final int GET_IP_DETAIL_RETRY_TIME = 3;
     @Resource
     private UserService userService;
-    private static final ExecutorService EXECUTOR = new ThreadPoolExecutor(1, 1,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(500),
-            new NamedThreadFactory("refresh-ipDetail", null, false));
+    @Resource(name = IP_EXECUTOR)
+    private ThreadPoolTaskExecutor ipExecutor;
+
     @Override
     public void refreshIpDetailAsync(Long id) {
-        EXECUTOR.execute(() -> {
+        ipExecutor.execute(() -> {
             User user = userService.getById(id);
             IpInfo ipInfo = user.getIpInfo();
             if(Objects.isNull(ipInfo)){

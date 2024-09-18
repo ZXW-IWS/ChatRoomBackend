@@ -55,9 +55,10 @@ class ChatRoomApplicationTest {
     public static final long UID = 1L;
 
     @Test
-    public void login(){
+    public void login() throws InterruptedException {
         String token = userService.login(1L);
         System.out.println("token = " + token);
+        Thread.sleep(10000);
     }
 
     @Test

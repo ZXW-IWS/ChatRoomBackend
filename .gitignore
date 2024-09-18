@@ -53,6 +53,9 @@ build/
 
 
 #special file
+application-dev.properties
+application-dev.yaml
+application-dev.yml
 application-prod.properties
 application-prod.yaml
 application-prod.yml

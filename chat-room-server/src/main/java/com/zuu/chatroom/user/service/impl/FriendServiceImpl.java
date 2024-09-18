@@ -53,6 +53,9 @@ public class FriendServiceImpl implements FriendService {
     public List<FriendResp> friendList(Long uid) {
         //1. 获取用户的好友列表
         List<UserFriend> friendList = userFriendService.getFriendList(uid);
+        if(friendList.isEmpty()){
+            return new ArrayList<>();
+        }
         //2. 获取好友是否在线
         List<Long> friendIds = friendList.stream().map(UserFriend::getFriendUid).toList();
         Map<Long,Integer> friendActiveMap = userService.getFriendActiveInfo(friendIds);

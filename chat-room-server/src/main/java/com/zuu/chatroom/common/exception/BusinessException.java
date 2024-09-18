@@ -2,6 +2,7 @@ package com.zuu.chatroom.common.exception;
 
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Author zuu
@@ -9,6 +10,7 @@ import lombok.Data;
  * @Date 2024/7/14 18:49
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException{
 
     private Integer code;

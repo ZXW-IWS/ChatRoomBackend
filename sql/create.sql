@@ -136,6 +136,7 @@ CREATE TABLE `message`  (
                             `gap_count` int(11) NULL DEFAULT NULL COMMENT '与回复的消息间隔多少条',
                             `type` int(11) NULL DEFAULT 1 COMMENT '消息类型 1正常文本 2.撤回消息',
                             `extra` json DEFAULT NULL COMMENT '扩展信息',
+                            `is_delete` int default 0 not null comment '逻辑删除 0-未删除，1-已删除',
                             `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
                             `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
                             PRIMARY KEY (`id`) USING BTREE,
@@ -240,3 +241,15 @@ CREATE TABLE `contact` (
 
 insert INTO `room`(`id`,`type`,`hot_flag`) values (1,1,1);
 insert INTO `room_group`(`id`,`room_id`,`name`,`avatar`) values (1,1,'全员群','');
+
+DROP TABLE IF EXISTS `user_emoji`;
+CREATE TABLE `user_emoji` (
+                              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                              `uid` bigint(20) NOT NULL COMMENT '用户表ID',
+                              `expression_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '表情地址',
+                              `is_delete` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除(0-正常,1-删除)',
+                              `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+                              `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
+                              PRIMARY KEY (`id`) USING BTREE,
+                              KEY `IDX_USER_EMOJIS_UID_URL` (`uid`,`expression_url`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='用户表情包';

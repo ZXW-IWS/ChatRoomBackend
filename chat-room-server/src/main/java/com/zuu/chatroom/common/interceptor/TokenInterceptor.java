@@ -29,29 +29,34 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //拦截器取到请求先进行判断，如果是OPTIONS请求，则放行
-        if("OPTIONS".equals(request.getMethod().toUpperCase())) {
+        if ("OPTIONS".equals(request.getMethod().toUpperCase())) {
             return true;
         }
 
         String token = getToken(request);
-       if(Objects.nonNull(token)){
-           //用户已登录
-           Long id = userService.getIdByToken(token);
-           request.setAttribute(ID_KEY,id);
-       }else{
-           //是否是公共接口
-           boolean isPublicUri = isPublicUri(request);
-           if(!isPublicUri){
-               //返回401未登录
-               HttpErrorEnum.NO_LOGIN.sendErrorResp(response);
-               return false;
-           }
-       }
+        if (Objects.nonNull(token)) {
+            Long id = userService.getIdByToken(token);
+            if(Objects.isNull(id)){
+                //返回401未登录
+                HttpErrorEnum.NO_LOGIN.sendErrorResp(response);
+                return false;
+            }
+            //用户已登录
+            request.setAttribute(ID_KEY, id);
+        } else {
+            //是否是公共接口
+            boolean isPublicUri = isPublicUri(request);
+            if (!isPublicUri) {
+                //返回401未登录
+                HttpErrorEnum.NO_LOGIN.sendErrorResp(response);
+                return false;
+            }
+        }
 
-       return true;
+        return true;
     }
 
-    private  boolean isPublicUri(HttpServletRequest request) {
+    private boolean isPublicUri(HttpServletRequest request) {
         //用户未登录，判断是否访问公共接口
         String requestURI = request.getRequestURI();
         String[] split = requestURI.split("/");

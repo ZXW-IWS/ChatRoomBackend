@@ -27,7 +27,7 @@ public class RedissonConfig {
         // 单点模式
         config.useSingleServer()
                 .setAddress("redis://" + host + ":" + port)
-                .setPassword("root")
+                .setPassword(password)
                 .setDatabase(database);
         // 集群模式
     /*config.useClusterServers()
