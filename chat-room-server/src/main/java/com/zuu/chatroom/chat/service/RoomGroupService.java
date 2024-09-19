@@ -16,4 +16,6 @@ public interface RoomGroupService extends IService<RoomGroup> {
     RoomGroup getByRoomId(Long roomId);
 
     RoomGroup createGroup(User user, Long roomId, List<User> userList);
+
+    void removeByRoomId(Long roomId);
 }

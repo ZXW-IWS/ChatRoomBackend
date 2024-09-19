@@ -11,6 +11,7 @@ import com.zuu.chatroom.chat.service.adapter.RoomAdapter;
 import com.zuu.chatroom.user.domain.po.User;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class RoomGroupServiceImpl extends ServiceImpl<RoomGroupMapper, RoomGroup
         RoomGroup roomGroup = RoomAdapter.buildGroupRoom(user,roomId,userList);
         this.save(roomGroup);
         return roomGroup;
+    }
+
+    @Override
+    @Transactional
+    public void removeByRoomId(Long roomId) {
+        this.remove(new QueryWrapper<RoomGroup>().eq("room_id",roomId));
     }
 
 

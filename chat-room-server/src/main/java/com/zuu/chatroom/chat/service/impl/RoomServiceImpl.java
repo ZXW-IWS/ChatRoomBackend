@@ -43,6 +43,9 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     MessageService messageService;
     @Resource
     GroupMemberService groupMemberService;
+    @Resource
+    @Lazy
+    ContactService contactService;
 
     @Override
     @Transactional
@@ -110,10 +113,13 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     public Boolean delGroupIfNeed(Long roomId,Long groupId) {
         List<Long> groupMemberList = groupMemberService.getGroupMemberList(groupId);
         if(groupMemberList.size() <= 1){
-            //删除房间(roomGroup已经删除过了)
+            //删除房间
             this.removeById(roomId);
+            roomGroupService.removeByRoomId(roomId);
             //删除群成员
             groupMemberService.removeAllGroupMember(groupId);
+            //删除会话
+            contactService.removeByRoomId(roomId);
             //删除消息记录
             messageService.delRoomMsg(roomId);
             return Boolean.TRUE;
