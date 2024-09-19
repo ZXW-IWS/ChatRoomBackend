@@ -77,14 +77,14 @@ public class GroupMemberServiceImpl extends ServiceImpl<GroupMemberMapper, Group
     public GroupMember getFirstManager(Long groupId) {
         return this.getOne(new QueryWrapper<GroupMember>()
                 .eq("group_id", groupId)
-                .eq("role", GroupRoleEnum.MANAGER.getType()));
+                .eq("role", GroupRoleEnum.MANAGER.getType()),false);
     }
 
     @Override
     public GroupMember getFirstMember(Long groupId) {
         return this.getOne(new QueryWrapper<GroupMember>()
                 .eq("group_id", groupId)
-                .eq("role", GroupRoleEnum.MEMBER.getType()));
+                .eq("role", GroupRoleEnum.MEMBER.getType()),false);
     }
 
 

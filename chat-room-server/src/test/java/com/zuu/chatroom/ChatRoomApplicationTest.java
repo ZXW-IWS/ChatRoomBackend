@@ -69,8 +69,6 @@ class ChatRoomApplicationTest {
         System.out.println("token2 = " + token);
         token = userService.login(3L);
         System.out.println("token3 = " + token);
-        token = userService.login(4L);
-        System.out.println("token4 = " + token);
 
     }
     
